@@ -8,7 +8,7 @@ typedef struct {
   int year;
   int mes;
   int dia;
-  char dia_semana[16];
+  int dia_semana;
   int t0; //numero de minutos desde las 00:00
   int tf;
   char actividad[128]; //TODO: seria ideal usar un enum, ya que hace un uso mas eficiente de la memoria
@@ -25,16 +25,18 @@ actividad *read_csv(char *filename) {
   FILE *csv = fopen(filename, "r");
   actividad *dataptr = malloc(sizeof(actividad)*SIZE_INCREMENT);
   char linea[2048];
-  int h0, hf, m0, mf; //variables locales para guardar t0 y tf en minutos
+  char dia_semana_str[64];
+  int h0, hf, m0, mf; //variables locales intermedias para poder leer el archivo
   unsigned int n = 0; //como el tamaño del archivo es de en torno a 5k lineas, nos vale de sobra con un unsigned int (64k)
   unsigned int capacidad = SIZE_INCREMENT;
   
   if (csv == NULL) {
     printf("no se ha podido abrir el archivo");
     free(dataptr);
-    exit(EXIT_FAILURE);
+    return NULL;
   }
-  fgets(linea, sizeof(linea), csv);  
+
+  fgets(linea, sizeof(linea), csv); //quitamos la primera linea que no contiene información
   while(fgets(linea, sizeof(linea), csv)) {
     if (n >= capacidad) {
       actividad *tempptr = realloc(dataptr, capacidad*sizeof(actividad));
@@ -42,14 +44,15 @@ actividad *read_csv(char *filename) {
       if (tempptr == NULL) {
         printf("problema de resizing del buffer");
         free(dataptr);
-        exit(EXIT_FAILURE);
+        return NULL;
       }
     }
+    
     sscanf(linea, "%d %d %d %15s %d:%d %d:%d %127s %127s %d %d %d %127s", 
         &dataptr[n].year, 
         &dataptr[n].mes,
         &dataptr[n].dia,
-        dataptr[n].dia_semana, //cast necesario ya que dia es un enum
+        dia_semana_str,
         &h0, 
         &m0, 
         &hf, 
@@ -60,8 +63,15 @@ actividad *read_csv(char *filename) {
         &dataptr[n].ocupado, 
         &dataptr[n].libre, 
         dataptr[n].tipo);
+
     dataptr[n].t0 = h0*60 + m0;
     dataptr[n].tf = hf*60 + mf;
+
+    for (int i = 0; i < 7; i++) {
+      if(strcmp(dia_semana_str, dia[i]) == 0) {
+        dataptr[n].dia_semana = i;
+      }
+    }
 
     n++;
     printf("%s", linea);
@@ -71,7 +81,7 @@ actividad *read_csv(char *filename) {
 }
 
 int main(void) {
-  read_csv("data.csv");
-  printf("%li", sizeof(actividad));
+  read_csv("dataset_muestra.csv");
+//  printf("%li", sizeof(actividad));
   return 0;
 }
