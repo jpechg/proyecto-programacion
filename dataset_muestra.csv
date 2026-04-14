@@ -1,8 +1,0 @@
-anio mes dia dia_semana hora_inicial hora_final actividad centro_deportivo plazas ocupadas libres tipo_actividad
-2026 1 31 sabado 08:00 09:00 Nado_Libre_Vaso_de_ensenanza Francisco_Fernandez_Ochoa 10 0 10 Uso_libre
-2026 1 31 sabado 08:00 09:30 Uso_sala_musculacion Francisco_Fernandez_Ochoa 130 51 79 Uso_libre
-2026 1 31 sabado 08:10 09:10 Nado_libre Francisco_Fernandez_Ochoa 120 37 83 Uso_libre
-2026 1 31 sabado 08:15 09:15 Nado_libre La_Almudena 20 20 0 Uso_libre
-2026 1 31 sabado 08:15 09:45 Uso_sala_musculacion La_Fundi 30 30 0 Uso_libre
-2026 1 31 sabado 08:30 10:00 Uso_Sala_multitrabajo Aluche 45 40 5 Uso_libre
-2026 1 31 sabado 08:30 10:00 Sala_de_Musculacion Felix_Rubio 12 12 0 Uso_libre
