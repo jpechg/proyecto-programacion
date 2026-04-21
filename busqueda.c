@@ -6,7 +6,7 @@
 #include "reader.h"
 void buscar_actividad (actividad *data,unsigned int n_data, const char *busqueda)
 {
-    int coincidentes[185];
+    int coincidentes[185]; //hay 185 
     int coincidencias = 0;
 
     for (unsigned int i = 0;i<185;i++)
