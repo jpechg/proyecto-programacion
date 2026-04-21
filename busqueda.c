@@ -1,44 +1,43 @@
-//esta funcion lo que hace es primero ver que actividades pasan el filtro buscado.
+//esta funcion lo que hace es buscar por un filtro(mes,año,actividad...) máximo de dos condiciones.
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include "reader.h"
-void buscar_actividad (actividad *data,unsigned int n_data, const char *busqueda)
+int *buscar_actividad (actividad *data,unsigned int n_data,int *coincidentes,int indice, uint32_t valor)
 {
-    int coincidentes[185]; //hay 185 
+    int *indices_coincidentes = malloc(sizeof(int)*n_data);
+    if (indices_coincidentes == NULL) {
+        printf("Ha habido un error");
+        return NULL;
+    }
     int coincidencias = 0;
-
-    for (unsigned int i = 0;i<185;i++)
+    for (int i=0;i<n_data; i++)
     {
-        if (strstr(actividades[i],busqueda) != NULL) //strstr lo que hace es comparar subcadenas, "nado" coincide con "nado_libre"
+        uint32_t *campos = (uint32_t*)&data[i]; //esto esta trasformando el struct en un vector
+        //el struct solo contiene enteros, asi que se puede tratar de esta forma
+        if (campos[indice] == valor)
         {
-            coincidentes[coincidencias++] = i; //si por ejemplo el numero 21 coincide lo apuntamos en coincidentes[0] y luego suma 1.
+            indices_coincidentes[coincidencias] = i;
+            coincidencias++;
         }
     }
-    if (coincidencias == 0)
-    {
-        printf("no se ha encontrado ninguna coincidencia para '%s'",busqueda);
-        return; //como es un void no retorna nada, solo sale de la función
-    } else
-    {
-        printf("Hay %d coincidencia para '%s'",coincidencias, busqueda);
-    }
-    //Ahora queremos mostrar los resultados
-    unsigned int resultados = 0;
-
-    for (unsigned int i = 0;i<n_data;i++)
-    {
-        for (int j = 0;j<coincidencias;j++)
-        {
-            if ( data[i].actividad == coincidentes[j])
-            {
-                printf("centro: %s\n",centro[data[i].centro]);
-                printf ("Actividad: %s\n", actividades[data[i].actividad]);
-                //alomejor, dependiendo de la interfaz de usuario queremos guardarlos en un struct en vez de printear
-            }
-        }
-    }
-    
-
+    *coincidentes = coincidencias;
+    return indices_coincidentes;
 }
+int filtrado_doble(actividad *data,int *indices_entrada, int n_entrada,int campo,uint32_t valor, int *indices_salida)
+{
+    int n_final = 0;
+    for (int i =0;i<n_entrada;i++)
+    {
+        uint32_t *campos = (uint32_t*)&data[indices_entrada[i]];
+        if (campos[campo] == valor)
+        {
+            indices_salida[n_final] = indices_entrada[i];
+            n_final++;
+        }
+    }
+    return n_final;
+}
+
+
