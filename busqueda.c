@@ -18,7 +18,7 @@ void buscar_actividad (actividad *data,unsigned int n_data, const char *busqueda
     }
     if (coincidencias == 0)
     {
-        printf("no se ha encontrado ninguna coincidencia para '%[^\n]'",busqueda);
+        printf("no se ha encontrado ninguna coincidencia para '%s'",busqueda);
         return; //como es un void no retorna nada, solo sale de la función
     } else
     {
@@ -39,6 +39,6 @@ void buscar_actividad (actividad *data,unsigned int n_data, const char *busqueda
             }
         }
     }
-
+    
 
 }
