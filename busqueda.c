@@ -4,27 +4,41 @@
 #include <stdint.h>
 #include <string.h>
 #include "reader.h"
-typedef struct {
-    char *filtro_actividad;
-    char *filtro_centro;
-    int dia_semana;
-    int t0;
-    int tf;
-    int plazas;
-} filtro;
-
-unsigned int filtrar(const actividad *data, unsigned int n_data, const filtro *f, actividad *destino, unsigned int max_dest)
+void buscar_actividad (actividad *data,unsigned int n_data, const char *busqueda)
 {
-    for (unsigned int i=0; i<n_data;i++)
+    int coincidentes[185];
+    int coincidencias = 0;
+
+    for (unsigned int i = 0;i<185;i++)
     {
-        int pasa = 1;
-        if (f->filtro_actividad != NULL)
+        if (strstr(actividades[i],busqueda) != NULL) //strstr lo que hace es comparar subcadenas, "nado" coincide con "nado_libre"
         {
-            char *nombre_tabla = actividades[data[i].actividad];
-            if (strstr(nombre_tabla,f->filtro_actividad)==NULL)
+            coincidentes[coincidencias++] = i; //si por ejemplo el numero 21 coincide lo apuntamos en coincidentes[0] y luego suma 1.
+        }
+    }
+    if (coincidencias == 0)
+    {
+        printf("no se ha encontrado ninguna coincidencia para '%[^\n]'",busqueda);
+        return; //como es un void no retorna nada, solo sale de la función
+    } else
+    {
+        printf("Hay %d coincidencia para '%s'",coincidencias, busqueda);
+    }
+    //Ahora queremos mostrar los resultados
+    unsigned int resultados = 0;
+
+    for (unsigned int i = 0;i<n_data;i++)
+    {
+        for (int j = 0;j<coincidencias;j++)
+        {
+            if ( data[i].actividad == coincidentes[j])
             {
-                pasa = 0;
+                printf("centro: %s\n",centro[data[i].centro]);
+                printf ("Actividad: %s\n", actividades[data[i].actividad]);
+                //alomejor, dependiendo de la interfaz de usuario queremos guardarlos en un struct en vez de printear
             }
         }
     }
+
+
 }
