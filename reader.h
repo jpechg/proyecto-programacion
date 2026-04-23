@@ -11,7 +11,7 @@ char *tipo[6] = {"uso_libre", "actividad_dirigida", "prueba_de_nivel", "barca_de
 
 typedef struct {
   uint32_t year, mes, dia, dia_semana; //fechas
-  uint32_t t0, tf //tiempo en minutos totales desde las 00:00;
+  uint32_t t0, tf; //tiempo en minutos totales desde las 00:00;
   uint32_t actividad, modalidad, centro; //indices sobre los arrays de cada elemento
   uint32_t total, ocupado, libre, tipo; //contadores
 } actividad;
