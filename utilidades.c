@@ -13,13 +13,13 @@ int actividad_ocupada(actividad *dataptr, unsigned int i) {
 
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
 {
-    unsigned int i = 0;
+    int i = 0;
     FILE *pf;
-    pf = fopen("Favoritos.txt","w");
+    pf = fopen("Favoritos.txt","a");
     if (pf == NULL)
     {
         printf("Ha habido un error");
-        return 0;
+        return -1;
     }
     uint32_t *campos = (uint32_t*)&dataptr[valor];
     for (i=0;i<9;i++) //9 son el numero de datos que queremos copiar en el favoritos
@@ -30,11 +30,24 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     fclose(pf);
     return 1;
 }
-int main ()
+
+int eliminar_favoritos(actividad *dataptr, unsigned int n_datos,uint32_t valor)
 {
-    int n = 0;
-    actividad *dataptr = read_csv("dataset.csv",&n);
-    add_favoritos (dataptr,5,n);
-    return 0;
+    char linea[2048];
+    unsigned int i = 0;
+    int j =0;
+    FILE *pf;
+    pf = fopen ("Favoritos.txt","w");
+    if (pf == NULL)
+    {
+        printf("Ha habido un error");
+        return -1;
+    }
+    while (fgets(linea,sizeof(linea),pf) != NULL)
+    {
+        if 
+    }
     
+    
+
 }
