@@ -38,3 +38,4 @@ if(WIN32)
     )
 endif()
 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/dataset.csv" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
