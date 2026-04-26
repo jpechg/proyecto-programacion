@@ -42,9 +42,9 @@ actividad *read_csv(char *filename, unsigned int *lineas) {
         &m0, //minutos de inicio
         &hf, 
         &mf, 
-        temp_str[1], //centro
+        temp_str[1], //actividad
         temp_str[2], //modalidad
-        temp_str[3], //actividades
+        temp_str[3], //centro
         &dataptr[n].total,
         &dataptr[n].ocupado, 
         &dataptr[n].libre,
@@ -54,23 +54,23 @@ actividad *read_csv(char *filename, unsigned int *lineas) {
     dataptr[n].t0 = h0*60 + m0; //calculamos el tiempo en minutos sumando horas y minutos del dato capturado
     dataptr[n].tf = hf*60 + mf;
 
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < N_DIAS; i++) {
       if(strcmp(temp_str[0], dia[i]) == 0) {
         dataptr[n].dia_semana = i;
       }
-    } for (int i = 0; i < 65; i++) {
-      if(strcmp(temp_str[1], centro[i]) == 0) {
+    } for (int i = 0; i < N_CENTROS; i++) {
+      if(strcmp(temp_str[3], centro[i]) == 0) {
         dataptr[n].centro = i;
       }
-    } for (int i = 0; i < 9; i++) {
+    } for (int i = 0; i < N_MODS; i++) {
       if(strcmp(temp_str[2], modalidad[i]) == 0) {
         dataptr[n].modalidad = i;
       }
-    } for (int i = 0; i < 185; i++) {
-      if(strcmp(temp_str[3], actividades[i]) == 0) {
+    } for (int i = 0; i < N_ACTS; i++) {
+      if(strcmp(temp_str[1], actividades[i]) == 0) {
         dataptr[n].actividad = i;
       }
-    } for (int i = 0; i < 6; i++) {
+    } for (int i = 0; i < N_TIPOS; i++) {
       if(strcmp(temp_str[4], tipo[i]) == 0) {
         dataptr[n].tipo = i;
       }
@@ -83,9 +83,4 @@ actividad *read_csv(char *filename, unsigned int *lineas) {
 
   fclose(csv);
   return(dataptr);
-}
-
-int main(void) {
-  unsigned int n = 0;
-  actividad *test = read_csv("dataset.csv",&n);
 }
