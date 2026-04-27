@@ -30,25 +30,85 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     fclose(pf);
     return 1;
 }
+int leer_favoritos()
+{
+  char linea[2048];
+  unsigned int i = 0;
+  FILE *pf;
+  pf = fopen("Favoritos.txt","r");
+  if (pf == NULL)
+    {
+        printf("Ha habido un error");
+        return -1;
+    }
+  while (fgets(linea,sizeof(linea),pf))
+  {
+    i++;
+  }
+  return i;
+}
 //Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
-int eliminar_favoritos(actividad *dataptr, unsigned int n_datos,uint32_t valor)
+int eliminar_favoritos(uint32_t valor)
 {
     char linea[2048];
+    unsigned int lineas = 0;
     unsigned int i = 0;
+    unsigned int contador = leer_favoritos();
+    actividad aux;
     int j =0;
     FILE *pf;
-    pf = fopen ("Favoritos.txt","w");
+    FILE *pf_aux;
+    int coincidencia = 0;
+    pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
         printf("Ha habido un error");
         return -1;
     }
-    while (fgets(linea,sizeof(linea),pf) != NULL)
+    pf_aux = fopen("Favoritos_aux.txt","w");
+    if (pf_aux == NULL)
     {
+        printf("Ha habido un error");
+        return -1;
     }
-    
-    
-
+    while (fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+        &aux.year,
+        &aux.mes,
+        &aux.dia,
+        &aux.dia_semana,
+        &aux.t0,
+        &aux.tf,
+        &aux.actividad,
+        &aux.modalidad,
+        &aux.centro) == 9)
+    {
+      if (aux.actividad != valor)
+      {
+        uint32_t *campos = (uint32_t*)&aux;
+        for (i=0;i<9;i++)
+        {
+          fprintf(pf_aux,"%u,",campos[i]);
+        }
+        fprintf(pf,"\n");
+      } else if (aux.actividad == valor)
+      {
+        coincidencia = 1;
+      }
+    }
+    while (fgets(linea,sizeof(linea),pf_aux))
+    {
+      lineas++;
+    }
+    if (lineas == (contador - 1))
+    {
+      remove("Favoritos.txt");
+      rename("Favoritos_aux.txt","Favoritos.txt");
+    } else
+    {
+      printf("HA HABIDO UN ERROR");
+    }
+    fclose(pf);
+    fclose(pf_aux);
 }
 //Esta funcion actividad comprueba cual es la actividad mas popular en cada centro.
 int actividad_popular(actividad *dataptr, unsigned int lineas, uint32_t c) {
