@@ -45,6 +45,7 @@ int leer_favoritos()
   {
     i++;
   }
+  fclose(pf);
   return i;
 }
 //Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
@@ -89,17 +90,22 @@ int eliminar_favoritos(uint32_t valor)
         {
           fprintf(pf_aux,"%u,",campos[i]);
         }
-        fprintf(pf,"\n");
+        fprintf(pf_aux,"\n");
       } else if (aux.actividad == valor)
       {
         coincidencia = 1;
       }
     }
+    rewind(pf_aux);
     while (fgets(linea,sizeof(linea),pf_aux))
     {
       lineas++;
     }
     if (lineas == (contador - 1))
+    {
+      remove("Favoritos.txt");
+      rename("Favoritos_aux.txt","Favoritos.txt");
+    } else if ((lineas==contador)&& (coincidencia == 0))
     {
       remove("Favoritos.txt");
       rename("Favoritos_aux.txt","Favoritos.txt");
@@ -109,6 +115,15 @@ int eliminar_favoritos(uint32_t valor)
     }
     fclose(pf);
     fclose(pf_aux);
+    if (coincidencia == 1)
+    {
+      printf("Se ha eliminado con exito\n");
+      return 1;
+    } else if (coincidencia == 0)
+    {
+      printf("NO ESTA EN FAVORITOS o ha habido un error\n");
+      return -1;
+    }
 }
 //Esta funcion actividad comprueba cual es la actividad mas popular en cada centro.
 int actividad_popular(actividad *dataptr, unsigned int lineas, uint32_t c) {
