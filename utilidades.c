@@ -45,7 +45,6 @@ int eliminar_favoritos(actividad *dataptr, unsigned int n_datos,uint32_t valor)
     }
     while (fgets(linea,sizeof(linea),pf) != NULL)
     {
-        if 
     }
     
     

@@ -31,7 +31,7 @@ target_include_directories(programacion1 PRIVATE
 
 # Link libraries
 # SDL2::SDL2 is the modern imported target that handles headers/libs automatically
-target_link_libraries(programacion1 PRIVATE SDL2::SDL2)
+target_link_libraries(programacion1 PRIVATE SDL2::SDL2main SDL2::SDL2)
 
 if(UNIX)
     target_link_libraries(programacion1 PRIVATE m)
