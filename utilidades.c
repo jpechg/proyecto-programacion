@@ -3,14 +3,14 @@
 #include <stdint.h>
 #include <string.h>
 #include "reader.h"
-
+//Esta funcion se encarga de comprobar si la actividad esta completa o no. Devuelve un verdadero o un falso.
 int actividad_ocupada(actividad *dataptr, unsigned int i) {
     if (dataptr[i].libre == 0) {
         return 1;
     }
     return 0;
 }
-
+//Esta funcion nos permite agregar a nuestros favoritos alguna actividad que nos guste para no tener que andala buscando siempre.
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
 {
     int i = 0;
@@ -30,7 +30,7 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     fclose(pf);
     return 1;
 }
-
+//Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
 int eliminar_favoritos(actividad *dataptr, unsigned int n_datos,uint32_t valor)
 {
     char linea[2048];
@@ -50,4 +50,25 @@ int eliminar_favoritos(actividad *dataptr, unsigned int n_datos,uint32_t valor)
     
     
 
+}
+//Esta funcion actividad comprueba cual es la actividad mas popular en cada centro.
+int actividad_popular(actividad *dataptr, unsigned int lineas, uint32_t c) {
+  unsigned int contador[N_ACTS] = {0};
+  int popular = -1;
+  unsigned int max = 0;
+
+  for (unsigned int i = 0; i < lineas; i++) {
+    if (dataptr[i].centro == c) {
+      contador[dataptr[i].actividad] += dataptr[i].ocupado;
+    }
+  }
+
+  for (int i = 0; i < N_ACTS; i++) {
+    if (contador[i] > max) {
+      max = contador[i];
+      popular = i;
+    }
+  }
+
+  return popular;
 }
