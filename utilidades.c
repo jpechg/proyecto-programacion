@@ -30,7 +30,7 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     fclose(pf);
     return 1;
 }
-int leer_favoritos()
+int longitud_favoritos()
 {
   char linea[2048];
   unsigned int i = 0;
@@ -48,13 +48,46 @@ int leer_favoritos()
   fclose(pf);
   return i;
 }
+int leer_favoritos(int n_favoritos)
+{
+  actividad *aux;
+  FILE *pf;
+  pf = fopen("Favoritos.txt","r");
+    if (pf == NULL)
+    {
+        printf("Ha habido un error");
+        return -1;
+    }
+  unsigned int i=0;
+  aux = malloc(sizeof(actividad) * n_favoritos);
+  if (aux == NULL)
+  {
+    printf ("MEMORIA NO DISPONIBLE\n");
+    exit(-1);
+  }
+  while (i<n_favoritos && fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+        &aux[i].year,
+        &aux[i].mes,
+        &aux[i].dia,
+        &aux[i].dia_semana,
+        &aux[i].t0,
+        &aux[i].tf,
+        &aux[i].actividad,
+        &aux[i].modalidad,
+        &aux[i].centro) == 9)
+    {
+      i++;
+}
+fclose(pf);  
+return 1;
+}
 //Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
 int eliminar_favoritos(uint32_t valor)
 {
     char linea[2048];
     unsigned int lineas = 0;
     unsigned int i = 0;
-    unsigned int contador = leer_favoritos();
+    unsigned int contador = longitud_favoritos();
     actividad aux;
     int j =0;
     FILE *pf;
