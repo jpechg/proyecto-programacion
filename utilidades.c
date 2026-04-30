@@ -23,7 +23,7 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
         return -1;
     }
     uint32_t *campos = (uint32_t*)&dataptr[valor];
-    for (i=0;i<9;i++) //9 son el numero de datos que queremos copiar en el favoritos
+    for (i=0;i<13;i++) //13 son el numero de datos que queremos copiar en el favoritos
     {
         fprintf(pf,"%u,",campos[i]);
     }
@@ -67,7 +67,7 @@ actividad *leer_favoritos()
     printf ("MEMORIA NO DISPONIBLE\n");
     exit(-1);
   }
-  while (i<n_favoritos && fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+  while (i<n_favoritos && fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
         &aux[i].year,
         &aux[i].mes,
         &aux[i].dia,
@@ -76,7 +76,11 @@ actividad *leer_favoritos()
         &aux[i].tf,
         &aux[i].actividad,
         &aux[i].modalidad,
-        &aux[i].centro) == 9)
+        &aux[i].centro,
+        &aux[i].total,
+        &aux[i].ocupado,
+        &aux[i].libre,
+        &aux[i].tipo) == 13)
     {
       i++;
 }
@@ -107,7 +111,7 @@ int eliminar_favoritos(uint32_t valor)
         printf("Ha habido un error al leer Favoritos_aux.txt\n");
         return -1;
     }
-    while (fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+    while (fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
         &aux.year,
         &aux.mes,
         &aux.dia,
@@ -116,7 +120,11 @@ int eliminar_favoritos(uint32_t valor)
         &aux.tf,
         &aux.actividad,
         &aux.modalidad,
-        &aux.centro) == 9)
+        &aux.centro,
+        &aux.total,
+        &aux.ocupado,
+        &aux.libre,
+        &aux.tipo) == 13)
     {
       if (aux.actividad != valor)
       {
@@ -154,7 +162,7 @@ int eliminar_favoritos(uint32_t valor)
     {
       printf("Se ha eliminado con exito\n");
       return 1;
-    } else if (coincidencia == 0)
+    } else
     {
       printf("NO ESTA EN FAVORITOS o ha habido un error\n");
       return -1;
