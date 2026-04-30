@@ -13,7 +13,7 @@
 #define NK_SDL_GL3_IMPLEMENTATION
 #include "nuklear.h"
 #include "nuklear_sdl_gl3.h"
-
+#include "utilidades.h"
 #include "gui.h"
 
 int main(int argc, char *argv[]) {
