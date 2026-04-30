@@ -17,6 +17,14 @@ int add_unique(char items[][MAX_STR_LEN], int *count, char *new_item) {
     return -1;
 }
 
+void print_array(FILE* f, char* name, char items[][MAX_STR_LEN], int count) {
+    fprintf(f, "char *%s[%d] = {", name, count);
+    for (int i = 0; i < count; i++) {
+        fprintf(f, "\"%s\"%s", items[i], (i == count - 1) ? "" : ", ");
+    }
+    fprintf(f, "};\n");
+}
+
 int main() {
     FILE *csv = fopen("dataset.csv", "r");
     if (!csv) {
@@ -60,13 +68,6 @@ int main() {
     fprintf(h, "#include <stdint.h>\n\n");
 
     //escribir los arrays de strings
-    auto void print_array(FILE* f, char* name, char items[][MAX_STR_LEN], int count) {
-        fprintf(f, "char *%s[%d] = {", name, count);
-        for (int i = 0; i < count; i++) {
-            fprintf(f, "\"%s\"%s", items[i], (i == count - 1) ? "" : ", ");
-        }
-        fprintf(f, "};\n");
-    }
 
     fprintf(h, "static const char *dia[%d] = {", n_dias);
     for(int i=0; i<n_dias; i++) fprintf(h, "\"%s\"%s", lista_dias[i], i==n_dias-1?"":", ");

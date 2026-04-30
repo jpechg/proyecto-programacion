@@ -13,6 +13,7 @@ int actividad_ocupada(actividad *dataptr, unsigned int i) {
 //Esta funcion nos permite agregar a nuestros favoritos alguna actividad que nos guste para no tener que andala buscando siempre.
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
 {
+    //valor es el indice del struct a guardar
     int i = 0;
     FILE *pf;
     pf = fopen("Favoritos.txt","a");
