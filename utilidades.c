@@ -49,10 +49,11 @@ int longitud_favoritos()
   fclose(pf);
   return i;
 }
-actividad *leer_favoritos(int n_favoritos)
+actividad *leer_favoritos()
 {
   actividad *aux;
   FILE *pf;
+  int n_favoritos = longitud_favoritos();
   pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
