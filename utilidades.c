@@ -19,7 +19,7 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     pf = fopen("Favoritos.txt","a");
     if (pf == NULL)
     {
-        printf("Ha habido un error");
+        printf("Ha habido un error al leer Favoritos.txt\n");
         return -1;
     }
     uint32_t *campos = (uint32_t*)&dataptr[valor];
@@ -39,7 +39,7 @@ int longitud_favoritos()
   pf = fopen("Favoritos.txt","r");
   if (pf == NULL)
     {
-        printf("Ha habido un error");
+        printf("Ha habido un error al leer Favoritos.txt\n");
         return -1;
     }
   while (fgets(linea,sizeof(linea),pf))
@@ -57,7 +57,7 @@ actividad *leer_favoritos()
   pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
-        printf("Ha habido un error");
+        printf("Ha habido un error al leer Favoritos.txt\n");
         return NULL;
     }
   unsigned int i=0;
@@ -98,13 +98,13 @@ int eliminar_favoritos(uint32_t valor)
     pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
-        printf("Ha habido un error");
+        printf("Ha habido un error al leer Favoritos.txt\n");
         return -1;
     }
     pf_aux = fopen("Favoritos_aux.txt","w");
     if (pf_aux == NULL)
     {
-        printf("Ha habido un error");
+        printf("Ha habido un error al leer Favoritos_aux.txt\n");
         return -1;
     }
     while (fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
@@ -146,7 +146,7 @@ int eliminar_favoritos(uint32_t valor)
       rename("Favoritos_aux.txt","Favoritos.txt");
     } else
     {
-      printf("HA HABIDO UN ERROR");
+      printf("HA HABIDO UN ERROR\n");
     }
     fclose(pf);
     fclose(pf_aux);
