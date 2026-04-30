@@ -48,7 +48,7 @@ int longitud_favoritos()
   fclose(pf);
   return i;
 }
-int leer_favoritos(int n_favoritos)
+actividad *leer_favoritos(int n_favoritos)
 {
   actividad *aux;
   FILE *pf;
@@ -78,6 +78,7 @@ int leer_favoritos(int n_favoritos)
     {
       i++;
 }
+return aux;
 fclose(pf);  
 return 1;
 }
