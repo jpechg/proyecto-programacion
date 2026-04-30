@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         nk_input_end(ctx);
 
         /* 4. UI Logic (Your Code) */
-        render_app(ctx, dataptr);
+        render_app(ctx, dataptr, n_lineas);
 
         /* 5. Rendering */
         glViewport(0, 0, 1280, 720);
