@@ -27,8 +27,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         //Botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
-            //rellenar con los indices de ver_favoritos
-
+            actividad *dataptr = leer_favoritos();
         }
         if (nk_button_label(ctx, "Centros 100% Ocupación")) {
             //rellenar con la funcion de utilidades.c
