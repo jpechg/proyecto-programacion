@@ -5,7 +5,7 @@
 #include "utilidades.h"
 #include "gui.h"
 
-void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas) {
+void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, int *flag) {
     if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_TITLE)) 
     {
@@ -27,7 +27,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         //Botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
-            actividad *dataptr = leer_favoritos();
+            *flag = 1;
         }
         if (nk_button_label(ctx, "Centros 100% Ocupación")) {
             //rellenar con la funcion de utilidades.c
@@ -69,7 +69,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         if (nk_group_begin(ctx, "TableRegion", NK_WINDOW_BORDER)) {
             char row_data[11][512];
             
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < n_lineas; i++) {
                 fill_row_data(row_data, dataptr[i]);
                 
                 // Replicate the template for the rows

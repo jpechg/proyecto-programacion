@@ -42,8 +42,11 @@ int main(int argc, char *argv[]) {
     nk_sdl_font_stash_end();
 
     int running = 1;
+    int flag = 0;
     unsigned int n_lineas = 0;
+    int n_favs = longitud_favoritos();
     actividad *dataptr = read_csv("dataset.csv", &n_lineas);
+    actividad *dataptr_favs = leer_favoritos(n_favs);
     while (running) {
         /* 3. Input Handling */
         SDL_Event evt;
@@ -55,8 +58,8 @@ int main(int argc, char *argv[]) {
         nk_input_end(ctx);
 
         /* 4. UI Logic (Your Code) */
-        render_app(ctx, dataptr, n_lineas);
-
+        if (flag == 1) {render_app(ctx,dataptr_favs,n_favs,&flag);}
+        else {render_app(ctx,dataptr,n_lineas, &flag);}
         /* 5. Rendering */
         glViewport(0, 0, 1280, 720);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
