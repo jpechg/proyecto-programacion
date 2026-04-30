@@ -143,7 +143,8 @@ int eliminar_favoritos(actividad act_a_elim)
           fprintf(pf_aux,"%u,",campos[i]);
         }
         fprintf(pf_aux,"\n");
-      //} else if (aux.actividad == valor)
+      }
+        //else if (aux.actividad == valor)
       {
         coincidencia = 1;
       }
