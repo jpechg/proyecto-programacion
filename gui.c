@@ -2,9 +2,10 @@
 #include <string.h>
 #include "nuklear.h" 
 #include "reader.h"
+#include "utilidades.h"
 #include "gui.h"
 
-void render_app(struct nk_context *ctx, actividad *dataptr) {
+void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas) {
     if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_TITLE)) 
     {
@@ -23,12 +24,10 @@ void render_app(struct nk_context *ctx, actividad *dataptr) {
         if (nk_button_label(ctx, "Ejecutar Análisis")) {
             //TODO: hacer el analisis de los datos mediante las funciones de busqueda
         }
-
         //Botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
-            //rellenar con los indices de ver_favoritos
-
+            actividad *dataptr = leer_favoritos();
         }
         if (nk_button_label(ctx, "Centros 100% Ocupación")) {
             //rellenar con la funcion de utilidades.c
@@ -94,6 +93,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr) {
                 }
                 
                 if (nk_button_label(ctx, "⭐")) {
+                    add_favoritos(dataptr,i,n_lineas);
                     //llamar a la funcion de guardar favoritos
                 }
             }

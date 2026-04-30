@@ -27,6 +27,7 @@ Thumbs.db
 
 # --- CMake specifics ---
 CMakeCache.txt
+Favoritos.txt
 CMakeFiles/
 CMakeScripts/
 cmake_install.cmake
