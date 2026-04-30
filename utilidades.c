@@ -67,7 +67,7 @@ actividad *leer_favoritos()
     printf ("MEMORIA NO DISPONIBLE\n");
     exit(-1);
   }
-  while (i<n_favoritos && fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+  while (i<n_favoritos && fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,\n",
         &aux[i].year,
         &aux[i].mes,
         &aux[i].dia,
@@ -88,7 +88,7 @@ fclose(pf);
 return aux;
 }
 //Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
-int eliminar_favoritos(uint32_t valor)
+int eliminar_favoritos(actividad act_a_elim)
 {
     char linea[2048];
     unsigned int lineas = 0;
@@ -126,10 +126,19 @@ int eliminar_favoritos(uint32_t valor)
         &aux.libre,
         &aux.tipo) == 13)
     {
-      if (aux.actividad != valor)
+      uint32_t *campos = (uint32_t*)&aux;
+      uint32_t *campos2 = (uint32_t*)&act_a_elim;
+      for(i=0;i<13;i++)
+      {
+        if (campos[i]==campos2[i])
+        {
+
+        }
+      }
+      if (aux.actividad != act_a_elim)
       {
         uint32_t *campos = (uint32_t*)&aux;
-        for (i=0;i<9;i++)
+        for (i=0;i<13;i++)
         {
           fprintf(pf_aux,"%u,",campos[i]);
         }
