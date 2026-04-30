@@ -57,7 +57,7 @@ actividad *leer_favoritos(int n_favoritos)
     if (pf == NULL)
     {
         printf("Ha habido un error");
-        return -1;
+        return NULL;
     }
   unsigned int i=0;
   aux = malloc(sizeof(actividad) * n_favoritos);
@@ -79,9 +79,8 @@ actividad *leer_favoritos(int n_favoritos)
     {
       i++;
 }
+fclose(pf); 
 return aux;
-fclose(pf);  
-return 1;
 }
 //Esta funcion hace lo mismo que la anterior pero ahora lo que hace es eliminar una actividad de favoritos.
 int eliminar_favoritos(uint32_t valor)
