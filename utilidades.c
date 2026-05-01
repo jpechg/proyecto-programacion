@@ -98,6 +98,7 @@ int eliminar_favoritos(actividad act_a_elim)
     FILE *pf;
     FILE *pf_aux;
     int coincidencia = 0;
+    int numero = 0;
     pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
@@ -110,6 +111,7 @@ int eliminar_favoritos(actividad act_a_elim)
         printf("Ha habido un error al leer Favoritos_aux.txt\n");
         return -1;
     }
+    uint32_t *campos2 = (uint32_t*)&act_a_elim;;
     while (fscanf(pf,"%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,\n",
         &aux.year,
         &aux.mes,
@@ -126,33 +128,33 @@ int eliminar_favoritos(actividad act_a_elim)
         &aux.tipo) == 13)
     {
       uint32_t *campos = (uint32_t*)&aux;
-      uint32_t *campos2 = (uint32_t*)&act_a_elim;
       for(i=0;i<13;i++)
       {
         if (campos[i]==campos2[i])
         {
-
+          numero++;
         }
       }
-      //if (aux.actividad != act_a_elim)
+      if (numero != 13)
       {
-        uint32_t *campos = (uint32_t*)&aux;
-        for (i=0;i<13;i++)
+        for(i=0;i<13;i++)
         {
           fprintf(pf_aux,"%u,",campos[i]);
         }
         fprintf(pf_aux,"\n");
-      }
-        //else if (aux.actividad == valor)
+      } else if (numero == 13)
       {
         coincidencia = 1;
       }
+      numero = 0;
     }
     rewind(pf_aux);
     while (fgets(linea,sizeof(linea),pf_aux))
     {
       lineas++;
     }
+    fclose(pf);
+    fclose(pf_aux);
     if (lineas == (contador - 1))
     {
       remove("Favoritos.txt");
@@ -165,8 +167,6 @@ int eliminar_favoritos(actividad act_a_elim)
     {
       printf("HA HABIDO UN ERROR\n");
     }
-    fclose(pf);
-    fclose(pf_aux);
     if (coincidencia == 1)
     {
       printf("Se ha eliminado con exito\n");
