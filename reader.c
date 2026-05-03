@@ -77,7 +77,7 @@ actividad *read_csv(char *filename, unsigned int *lineas) {
     }
     
     n++;
-    printf("%s", linea);
+    //printf("%s", linea);
   }
   *lineas = n; //devolvemos el numero de lineas que se han escrito (por referencia)
 
