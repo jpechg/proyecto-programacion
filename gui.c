@@ -110,8 +110,8 @@ void fill_row_data(char dest[11][512], actividad v) {
     strcpy(dest[3], dia[v.dia_semana]);
     sprintf(dest[4], "%02d:%02d", v.t0 / 60, v.t0 % 60);
     strcpy(dest[5], actividades[v.actividad]);
-    strcpy(dest[6], actividades[v.modalidad]);
-    strcpy(dest[7], actividades[v.centro]);
+    strcpy(dest[6], modalidad[v.modalidad]);
+    strcpy(dest[7], centro[v.centro]);
     sprintf(dest[8], "%d", v.total);
     sprintf(dest[9], "%d", v.ocupado);
     sprintf(dest[10], "%d", v.libre);

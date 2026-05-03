@@ -29,7 +29,7 @@ actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned in
         if (no_vacio && todas_llenas) {
             actividad *tmp = realloc(resultado, sizeof(actividad) * (n + 1)); //usamos realloc para que el codigo sea mas compacto, pero seria mas eficiente 2 pasadas por los datos para hacer un solo malloc
             if (!tmp) {
-              fprintf(stderr, "Sin memoria al intentar un realloc\n");
+              printf("Sin memoria al intentar un realloc\n");
               free(resultado);
               return NULL;
             }
@@ -40,6 +40,36 @@ actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned in
 
     *n_resultado = n;
     return resultado;  //despues de llamar la funcion, usar free
+}
+static int comp_por_ocupacion(const void *a_void, const void *b_void)
+{
+    const actividad *a = (const actividad *)a_void;
+    const actividad *b = (const actividad *)b_void;
+
+    /* cast to int to avoid unsigned wraparound */
+    return b->ocupado >= a->ocupado;
+}
+actividad *ordenar_por_ocupacion(actividad *dataptr, unsigned int n_lineas, uint32_t centro, unsigned int *n_resultado)
+{
+    //contar cuantos elementos tienen este centro
+    unsigned int n = 0;
+    for (unsigned int i = 0; i < n_lineas; i++) {
+        if (centro == UINT32_MAX || dataptr[i].centro == centro)
+            n++;
+    }
+    actividad *copia = malloc(sizeof(actividad) * n);
+    if (!copia) {
+        printf("Sin memoria al ordenar por ocupacion\n");
+        return NULL;
+    }
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < n_lineas; i++) {
+        if (centro == UINT32_MAX || dataptr[i].centro == centro)
+            copia[j++] = dataptr[i];
+    }
+    qsort(copia, n, sizeof(actividad), comp_por_ocupacion);
+    *n_resultado = n;
+    return copia; //ejecutar free tras llamada
 }
 //Esta funcion nos permite agregar a nuestros favoritos alguna actividad que nos guste para no tener que andala buscando siempre.
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
