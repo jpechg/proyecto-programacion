@@ -71,6 +71,18 @@ actividad *ordenar_por_ocupacion(actividad *dataptr, unsigned int n_lineas, uint
     *n_resultado = n;
     return copia; //ejecutar free tras llamada
 }
+void frecuencia_diaria_actividad(actividad *dataptr, unsigned int n_lineas, uint32_t actividad_id, unsigned int resultado[31]) {
+
+    for (unsigned int i = 0; i < 31; i++) {
+        resultado[i] = 0;
+    }
+
+    for (unsigned int i = 0; i < n_lineas; i++) {
+        if (dataptr[i].actividad == actividad_id && dataptr[i].dia >= 1 && dataptr[i].dia <= 31) {
+            resultado[dataptr[i].dia - 1]++; //el -1 ya que los meses empiezan en 1 pero el array en 0
+        }
+    }
+}
 //Esta funcion nos permite agregar a nuestros favoritos alguna actividad que nos guste para no tener que andala buscando siempre.
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
 {
