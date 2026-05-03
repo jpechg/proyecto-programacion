@@ -10,6 +10,37 @@ int actividad_ocupada(actividad *dataptr, unsigned int i) {
     }
     return 0;
 }
+actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado)
+{
+    actividad *resultado = NULL;
+    unsigned int n = 0;
+    for (unsigned int i = 0; i < n_lineas; i++) {
+        int todas_llenas = 1;
+        int no_vacio = 0;
+        for (unsigned int j = 0; j < n_lineas; j++) {
+            if (dataptr[j].centro == dataptr[i].centro) {
+                no_vacio = 1;
+                if (!actividad_ocupada(dataptr, j)) {
+                    todas_llenas = 0;
+                    break; //usamos un break puntual para no ejecutar todo el loop de forma superflua
+                }
+            }
+        }
+        if (no_vacio && todas_llenas) {
+            actividad *tmp = realloc(resultado, sizeof(actividad) * (n + 1)); //usamos realloc para que el codigo sea mas compacto, pero seria mas eficiente 2 pasadas por los datos para hacer un solo malloc
+            if (!tmp) {
+              fprintf(stderr, "Sin memoria al intentar un realloc\n");
+              free(resultado);
+              return NULL;
+            }
+            resultado = tmp;
+            resultado[n++] = dataptr[i];
+        }
+    }
+
+    *n_resultado = n;
+    return resultado;  //despues de llamar la funcion, usar free
+}
 //Esta funcion nos permite agregar a nuestros favoritos alguna actividad que nos guste para no tener que andala buscando siempre.
 int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
 {
