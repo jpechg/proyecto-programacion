@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
     int n_favs = longitud_favoritos();
     actividad *dataptr = read_csv("dataset.csv", &n_lineas);
     actividad *dataptr_favs = leer_favoritos(n_favs);
+    printf("%p",dataptr_favs);
     while (running) {
         /* 3. Input Handling */
         SDL_Event evt;
