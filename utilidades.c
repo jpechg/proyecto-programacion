@@ -112,7 +112,6 @@ int longitud_favoritos()
   pf = fopen("Favoritos.txt","r");
   if (pf == NULL)
     {
-      fclose(pf);
       printf("Se va a crear Favoritos.txt\n");
       FILE *pf_crear;
       pf_crear=fopen("Favoritos.txt","a");
