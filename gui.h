@@ -11,11 +11,13 @@ typedef struct {
     // Buffers para filtros
     int centro_seleccionado;
     int actividad_seleccionada;
-    int modo_analisis; // 0: Frecuencia, 1: Popular, 2: Gráfica
 
     int mostrar_popup_analisis;
-    char titulo_popup[256];
-    char contenido_popup[2048];
+    int tipo_analisis; // 0: frecuencia, 1: popular
+    unsigned int frecuencias[N_DIAS]; // Para frecuencia diaria
+    int actividad_analizada;
+    int centro_analizado;
+    int actividad_popular;
 } struct_estado_app;
 
 void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado);

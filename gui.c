@@ -8,43 +8,104 @@
 #include "ordenar.h"
 
 // Funcion para renderizar el popup de analisis
-static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *state) {
-    if (state->mostrar_popup_analisis) {
-        struct nk_rect popup_bounds = nk_rect(200, 150, 600, 400);
+static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *estado) {
+    if (estado->mostrar_popup_analisis) {
+        struct nk_rect popup_bounds = nk_rect(250, 150, 500, 450);
         
-        if (nk_popup_begin(ctx, NK_POPUP_STATIC, state->titulo_popup, 
+        if (nk_popup_begin(ctx, NK_POPUP_STATIC, "Análisis de Datos", 
                           NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_CLOSABLE,
                           popup_bounds)) 
         {
-            nk_layout_row_dynamic(ctx, 300, 1);
-            
-            //contenido scrolleable
-            if (nk_group_begin(ctx, "PopupContent", NK_WINDOW_BORDER)) {
-                nk_layout_row_dynamic(ctx, 20, 1);
+            if (estado->tipo_analisis == 0) { // Frecuencia Diaria
+                nk_layout_row_dynamic(ctx, 25, 1);
+                char titulo[128];
+                snprintf(titulo, sizeof(titulo), "Actividad: %s", 
+                        actividades[estado->actividad_analizada]);
+                nk_label(ctx, titulo, NK_TEXT_CENTERED);
                 
-                //procesar y mostrar el contenido línea por línea
-                char *linea = strtok(state->contenido_popup, "\n");
-                while (linea != NULL) {
-                    nk_label(ctx, linea, NK_TEXT_LEFT);
-                    linea = strtok(NULL, "\n");
+                // Tabla con encabezados
+                nk_layout_row_dynamic(ctx, 25, 3);
+                nk_label(ctx, "Día", NK_TEXT_CENTERED);
+                nk_label(ctx, "Ocurrencias", NK_TEXT_CENTERED);
+                nk_label(ctx, "Porcentaje", NK_TEXT_CENTERED);
+                
+                // Calcular total
+                unsigned int total = 0;
+                for (int i = 0; i < 31; i++) {
+                    total += estado->frecuencias[i];
                 }
                 
-                nk_group_end(ctx);
+                // Contenido scrollable
+                nk_layout_row_dynamic(ctx, 300, 1);
+                if (nk_group_begin(ctx, "FreqTable", NK_WINDOW_BORDER)) {
+                    char buffer[64];
+                    
+                    for (int i = 0; i < 31; i++) {
+                        if (estado->frecuencias[i] > 0) {
+                            nk_layout_row_dynamic(ctx, 25, 3);
+                            
+                            // Día
+                            snprintf(buffer, sizeof(buffer), "%d", i + 1);
+                            nk_label(ctx, buffer, NK_TEXT_CENTERED);
+                            
+                            // Ocurrencias
+                            snprintf(buffer, sizeof(buffer), "%u", estado->frecuencias[i]);
+                            nk_label(ctx, buffer, NK_TEXT_CENTERED);
+                            
+                            // Porcentaje
+                            float porcentaje = (estado->frecuencias[i] * 100.0f) / total;
+                            snprintf(buffer, sizeof(buffer), "%.1f%%", porcentaje);
+                            nk_label(ctx, buffer, NK_TEXT_CENTERED);
+                        }
+                    }
+                    
+                    nk_group_end(ctx);
+                }
+                
+                // Total al final
+                nk_layout_row_dynamic(ctx, 25, 1);
+                char total_str[64];
+                snprintf(total_str, sizeof(total_str), "Total: %u ocurrencias", total);
+                nk_label(ctx, total_str, NK_TEXT_CENTERED);
+                
+            } else if (estado->tipo_analisis == 1) { // Más Popular
+                nk_layout_row_dynamic(ctx, 25, 1);
+                char titulo[128];
+                snprintf(titulo, sizeof(titulo), "Centro: %s", 
+                        centro[estado->centro_analizado]);
+                nk_label(ctx, titulo, NK_TEXT_CENTERED);
+                
+                nk_layout_row_dynamic(ctx, 30, 1);
+                nk_label(ctx, "", NK_TEXT_LEFT); // Espaciador
+                
+                nk_layout_row_dynamic(ctx, 25, 1);
+                nk_label(ctx, "Actividad más popular:", NK_TEXT_LEFT);
+                
+                nk_layout_row_dynamic(ctx, 30, 1);
+                if (estado->actividad_popular >= 0) {
+                    char act_nombre[256];
+                    snprintf(act_nombre, sizeof(act_nombre), "→ %s", 
+                            actividades[estado->actividad_popular]);
+                    nk_label(ctx, act_nombre, NK_TEXT_LEFT);
+                } else {
+                    nk_label(ctx, "No se encontraron datos", NK_TEXT_LEFT);
+                }
             }
             
-            //boton para cerrar
+            // Botón cerrar
             nk_layout_row_dynamic(ctx, 30, 1);
             if (nk_button_label(ctx, "Cerrar")) {
-                state->mostrar_popup_analisis = 0;
+                estado->mostrar_popup_analisis = 0;
                 nk_popup_close(ctx);
             }
             
             nk_popup_end(ctx);
         } else {
-            state->mostrar_popup_analisis = 0;
+            estado->mostrar_popup_analisis = 0;
         }
     }
 }
+
 
 void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado) {
     if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
@@ -70,23 +131,18 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         
         if (nk_button_label(ctx, "Ejecutar Análisis")) {
             if (modo_combo == 0) { // Frecuencia Diaria
-                    unsigned int frecuencias[31];
-                    frecuencia_diaria_actividad(dataptr, n_lineas, actividad_combo, frecuencias);
+                frecuencia_diaria_actividad(dataptr, n_lineas, actividad_combo, 
+                                           estado->frecuencias);
+                estado->tipo_analisis = 0;
+                estado->actividad_analizada = actividad_combo;
+                estado->mostrar_popup_analisis = 1;
                 
-                    printf("\n=== Frecuencia Diaria de %s ===\n", actividades[actividad_combo]);
-                    for (int i = 0; i < 31; i++) {
-                        if (frecuencias[i] > 0)
-                            printf("Día %d: %u ocurrencias\n", i+1, frecuencias[i]);
-                    }
-                }
-            else if (modo_combo == 1) { // Más Popular
-                int popular = actividad_popular(dataptr, n_lineas, centro_combo);
-                if (popular >= 0) {
-                    printf("\n=== Actividad más popular en %s ===\n", centro[centro_combo]);
-                    printf("%s\n", actividades[popular]);
-                }
+            } else if (modo_combo == 1) { // Más Popular
+                estado->actividad_popular = actividad_popular(dataptr, n_lineas, centro_combo);
+                estado->tipo_analisis = 1;
+                estado->centro_analizado = centro_combo;
+                estado->mostrar_popup_analisis = 1;
             }
-        }
         //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
