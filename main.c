@@ -34,13 +34,23 @@ int main(int argc, char *argv[]) {
     }
     /* 2. Nuklear SDL/GL3 Setup */
     struct nk_context *ctx = nk_sdl_init(win);
-    
-    // Load Fonts (Important for rendering text)
+
     struct nk_font_atlas *atlas;
+    struct nk_font_config config = nk_font_config(0); // Inicializar configuración
+    struct nk_font *sans;
+
     nk_sdl_font_stash_begin(&atlas);
-    // nk_font_atlas_add_default(atlas); // Use default or load .ttf here
+
+    sans = nk_font_atlas_add_from_file(atlas, "LiberationSans-Regular.ttf", 18, &config); //carga la fuente de texto
+
+    static const nk_rune emojis_rango[] = {0x1f600, 0x1f64f, 0};
+    
+    config.merge_mode = 1; 
+    nk_font_atlas_add_from_file(atlas, "NotoEmoji-Regular.ttf", 18, &config);
+
     nk_sdl_font_stash_end();
 
+    nk_style_set_font(ctx, &sans->handle);    
     int running = 1;
     int flag = 0;
     unsigned int n_lineas = 0;
