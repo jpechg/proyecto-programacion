@@ -52,7 +52,12 @@ int main(int argc, char *argv[]) {
 
     nk_style_set_font(ctx, &sans->handle);    
     int running = 1;
-    int flag = 0;
+
+    struct_estado_app estado = {0};
+    estado.datos_actuales = NULL;
+    estado.n_datos_actuales = 0;
+    estado.mostrar_favoritos = 0;
+
     unsigned int n_lineas = 0;
     int n_favs = longitud_favoritos();
     actividad *dataptr = read_csv("dataset.csv", &n_lineas);
@@ -68,10 +73,22 @@ int main(int argc, char *argv[]) {
         }
         nk_input_end(ctx);
 
-        /* 4. UI Logic (Your Code) */
-        if (flag == 1) {render_app(ctx,dataptr_favs,n_favs,&flag);}
-        else {render_app(ctx,dataptr,n_lineas, &flag);}
-        /* 5. Rendering */
+        if (estado.mostrar_favoritos) {
+            // Recargar favoritos cada vez
+            if (dataptr_favs) free(dataptr_favs);
+            n_favs = longitud_favoritos();
+            dataptr_favs = leer_favoritos(n_favs);
+            
+            if (dataptr_favs && n_favs > 0) {
+                render_app(ctx, dataptr_favs, n_favs, &estado);
+            } else {
+                estado.mostrar_favoritos = 0; // Volver a vista normal
+                render_app(ctx, dataptr, n_lineas, &estado);
+            }
+        } else {
+            render_app(ctx, dataptr, n_lineas, &estado);
+        }
+            /* 5. Rendering */
         glViewport(0, 0, 1280, 720);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -82,7 +99,18 @@ int main(int argc, char *argv[]) {
         SDL_GL_SwapWindow(win);
     }
 
-    /* 6. Cleanup */
+    if (estado.datos_actuales && estado.datos_actuales != dataptr) {
+        free(estado.datos_actuales);
+    }
+    if (dataptr_favs) {
+         free(dataptr_favs);
+    }
+    free(dataptr);
+    
+    nk_sdl_shutdown();
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
     nk_sdl_shutdown();
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(win);

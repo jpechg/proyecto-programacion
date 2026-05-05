@@ -3,7 +3,16 @@
 #include <math.h>
 #include "reader.h"
 
-/* Define Nuklear implementation constants in one C file */
+typedef struct {
+    actividad *datos_actuales;
+    unsigned int n_datos_actuales;
+    int mostrar_favoritos;
+    
+    // Buffers para filtros
+    int centro_seleccionado;
+    int actividad_seleccionada;
+    int modo_analisis; // 0: Frecuencia, 1: Popular, 2: Gráfica
+} struct_estado_app;
 
-void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, int *flag);
+void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado);
 void fill_row_data(char dest[11][512], actividad v);

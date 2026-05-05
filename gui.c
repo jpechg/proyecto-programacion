@@ -1,36 +1,72 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "nuklear.h" 
 #include "reader.h"
 #include "utilidades.h"
 #include "gui.h"
 
-void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, int *flag) {
+void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado) {
     if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_TITLE)) 
     {
         //Seccion de arriba (selectores para buscar)
         nk_layout_row_dynamic(ctx, 35, 4);
+
         //static ya que la funcion se llamara cada vez que se renderice, no queremos reinicializar la variable siempre
+        static int centro_combo = 0;
+        static int actividad_combo = 0;
+        static int modo_combo = 0;
         static char buffer_busqueda[256];
         static int len_busqueda;
+
         nk_edit_string(ctx, NK_EDIT_FIELD, buffer_busqueda, &len_busqueda, 255, nk_filter_default);
         const char *options[] = {"Frecuencia Diaria", "Más Popular", "Evolución Gráfica"};
         int seleccion_1 = 0;
         int seleccion_modo = 0;
-        seleccion_1 = nk_combo(ctx, actividades, 185, seleccion_1, 25, nk_vec2(200, 200));
-        seleccion_modo = nk_combo(ctx, options, 3, seleccion_modo, 25, nk_vec2(200, 200));
-
+        centro_combo = nk_combo(ctx, centro, N_CENTROS, centro_combo, 25, nk_vec2(200, 200));
+        actividad_combo = nk_combo(ctx, actividades, N_ACTS, actividad_combo, 25, nk_vec2(200, 200));
+        modo_combo = nk_combo(ctx, options, 3, modo_combo, 25, nk_vec2(200, 200));
+        
         if (nk_button_label(ctx, "Ejecutar Análisis")) {
-            //TODO: hacer el analisis de los datos mediante las funciones de busqueda
+            if (modo_combo == 0) { // Frecuencia Diaria
+                    unsigned int frecuencias[31];
+                    frecuencia_diaria_actividad(dataptr, n_lineas, actividad_combo, frecuencias);
+                
+                    printf("\n=== Frecuencia Diaria de %s ===\n", actividades[actividad_combo]);
+                    for (int i = 0; i < 31; i++) {
+                        if (frecuencias[i] > 0)
+                            printf("Día %d: %u ocurrencias\n", i+1, frecuencias[i]);
+                    }
+                }
+            else if (modo_combo == 1) { // Más Popular
+                int popular = actividad_popular(dataptr, n_lineas, centro_combo);
+                if (popular >= 0) {
+                    printf("\n=== Actividad más popular en %s ===\n", centro[centro_combo]);
+                    printf("%s\n", actividades[popular]);
+                }
+            }
         }
-        //Botones para las acciones
+        //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
-            *flag = 1;
+                    estado->mostrar_favoritos = 1;
         }
         if (nk_button_label(ctx, "Centros 100% Ocupación")) {
-            //rellenar con la funcion de utilidades.c
+            unsigned int n_result = 0;
+            actividad *llenos = centros_llenos(dataptr, n_lineas, &n_result);
+            
+            if (llenos && n_result > 0) {
+                //liberar datos actuales si existen y no son los originales
+                if (estado->datos_actuales != dataptr && estado->datos_actuales != NULL) {
+                    free(estado->datos_actuales);
+                }
+                estado->datos_actuales = llenos;
+                estado->n_datos_actuales = n_result;
+                estado->mostrar_favoritos = 0;
+                
+                printf("Encontrados %u centros con 100%% ocupación\n", n_result);
+            }
         }
         if (nk_button_label(ctx, "Ordenar por Ocupación")) {
             //hacer un qsort con la ocupacion, y si eso filtrar por centro
@@ -68,11 +104,13 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         nk_layout_row_dynamic(ctx, 500, 1);
         if (nk_group_begin(ctx, "TableRegion", NK_WINDOW_BORDER)) {
             char row_data[11][512];
+
+            actividad *datos_mostrar = estado -> datos_actuales ? estado -> datos_actuales : dataptr;
+            unsigned int n_mostrar = estado -> datos_actuales ? estado -> n_datos_actuales : n_lineas;
             
-            for (int i = 0; i < n_lineas; i++) {
-                fill_row_data(row_data, dataptr[i]);
+            for (unsigned int i = 0; i < n_mostrar; i++) {
+                fill_row_data(row_data, datos_mostrar[i]);
                 
-                // Replicate the template for the rows
                 nk_layout_row_template_begin(ctx, 30);
                 nk_layout_row_template_push_static(ctx, 50);
                 nk_layout_row_template_push_static(ctx, 30);
@@ -93,8 +131,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 }
                 
                 if (nk_button_label(ctx, "⭐")) {
-                    add_favoritos(dataptr,i,n_lineas);
-                    //llamar a la funcion de guardar favoritos
+                    add_favoritos(dataptr, i, n_lineas);
                 }
             }
             nk_group_end(ctx);
