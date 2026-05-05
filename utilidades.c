@@ -112,9 +112,13 @@ int longitud_favoritos()
   pf = fopen("Favoritos.txt","r");
   if (pf == NULL)
     {
-        printf("Ha habido un error al leer Favoritos.txt\n");
-        return -1;
+      fclose(pf);
+      printf("Se va a crear Favoritos.txt\n");
+      FILE *pf_crear;
+      pf_crear=fopen("Favoritos.txt","a");
+      fclose(pf_crear);  
     }
+  pf = fopen("Favoritos.txt","r");
   while (fgets(linea,sizeof(linea),pf))
   {
     i++;
@@ -129,13 +133,9 @@ actividad *leer_favoritos(int n_favoritos)
   pf = fopen("Favoritos.txt","r");
     if (pf == NULL)
     {
-      fclose(pf);
-        printf("Se va a crear Favoritos.txt\n");
-        FILE *pf_crear;
-        pf_crear=fopen("Favoritos.txt","a");
-        fclose(pf_crear);
+      printf("Ha habido un error al leer Favoritos.txt\n");
+      return NULL;  
     }
-  pf = fopen("Favoritos.txt","r");
   unsigned int i=0;
   aux = malloc(sizeof(actividad) * n_favoritos);
   if (aux == NULL)
