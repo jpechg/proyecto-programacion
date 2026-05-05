@@ -136,13 +136,14 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 estado->tipo_analisis = 0;
                 estado->actividad_analizada = actividad_combo;
                 estado->mostrar_popup_analisis = 1;
-                
+ 
             } else if (modo_combo == 1) { // Más Popular
                 estado->actividad_popular = actividad_popular(dataptr, n_lineas, centro_combo);
                 estado->tipo_analisis = 1;
                 estado->centro_analizado = centro_combo;
                 estado->mostrar_popup_analisis = 1;
             }
+        }
         //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
@@ -254,6 +255,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                     if (nk_button_label(ctx, "F")) {
                         add_favoritos(dataptr, i, n_lineas);
                     }
+                }
                 else if (estado -> mostrar_favoritos == 1) {
                     if (nk_button_label(ctx, "NF")) {
                     eliminar_favoritos(dataptr[i]);
