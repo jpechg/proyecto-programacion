@@ -6,13 +6,13 @@
 
 #define TOP_N 10
 
-// Esta estructura sirve para agrupar los resultados finales.
+//esta estructura sirve para agrupar los resultados finales.
 typedef struct {
     const char *nombre;
     uint32_t ocupacion_total;
 } ResultadoCentro;
 
-// Ahora ordenamos de mayor a menor ocupacion.
+//ahora ordenamos de mayor a menor ocupacion.
 int comparar_resultados(const void *a, const void *b) {
     ResultadoCentro *resA = (ResultadoCentro *)a;
     ResultadoCentro *resB = (ResultadoCentro *)b;
@@ -24,13 +24,13 @@ void crear_grafica(actividad *dataptr, unsigned int n_lineas) {
     // 1) Creamos un array para acumular ocupación por cada uno de los 65 centros
     ResultadoCentro resultados[N_CENTROS];
     
-    // 2) Inicializamos el array de resultados con los nombres del reader.h
+    //inicializamos el array de resultados con los nombres del reader.h
     for (int i = 0; i < N_CENTROS; i++) {
         resultados[i].nombre = centro[i];
         resultados[i].ocupacion_total = 0;
     }
 
-    // 3) Procesamos el dataptr, sumamos la ocupación acumulada por cada centro
+    //procesamos el dataptr, sumamos la ocupación acumulada por cada centro
     for (unsigned int i = 0; i < n_lineas; i++) {
         uint32_t idx_centro = dataptr[i].centro;
         if (idx_centro < N_CENTROS) {
@@ -38,10 +38,10 @@ void crear_grafica(actividad *dataptr, unsigned int n_lineas) {
         }
     }
 
-    // 4) Ordenamos los resultados de mayor a menor
+    //ordenamos los resultados de mayor a menor
     qsort(resultados, N_CENTROS, sizeof(ResultadoCentro), comparar_resultados);
 
-    // 5) Escribimos los datos para Gnuplot (Top 10)
+    //escribimos los datos para Gnuplot (Top 10)
     FILE *f_plot = fopen("ranking.dat", "w");
     if (!f_plot) return;
 
@@ -50,7 +50,7 @@ void crear_grafica(actividad *dataptr, unsigned int n_lineas) {
     }
     fclose(f_plot);
 
-    // 6) Configuramos la grafica para Gnuplot.
+    //configuramos la grafica para Gnuplot.
     FILE *f_script = fopen("config.gp", "w");
     if (!f_script) return;
 
@@ -63,7 +63,7 @@ void crear_grafica(actividad *dataptr, unsigned int n_lineas) {
     fprintf(f_script, "pause -1 'Pulsa Enter para cerrar'\n");
     fclose(f_script);
 
-    // 7) Ejecutamos Gnuplot.
+    //ejecutamos Gnuplot.
     printf("Procesando %u registros y generando grafica...\n", n_lineas);
     system("gnuplot config.gp");
 }
@@ -72,7 +72,7 @@ int main() {
     unsigned int n_lineas = 0;
     
     // dataptr recibirá el malloc que hacemos en read_csv.
-    actividad *dataptr = read_csv("datos.csv", &n_lineas);
+    actividad *dataptr = read_csv("dataset.csv", &n_lineas);
 
     if (dataptr != NULL && n_lineas > 0) {
         // Generamos la gráfica usando el puntero a la memoria

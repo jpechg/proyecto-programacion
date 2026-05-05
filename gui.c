@@ -5,6 +5,46 @@
 #include "reader.h"
 #include "utilidades.h"
 #include "gui.h"
+#include "ordenar.h"
+
+// Funcion para renderizar el popup de analisis
+static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *state) {
+    if (state->mostrar_popup_analisis) {
+        struct nk_rect popup_bounds = nk_rect(200, 150, 600, 400);
+        
+        if (nk_popup_begin(ctx, NK_POPUP_STATIC, state->titulo_popup, 
+                          NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_CLOSABLE,
+                          popup_bounds)) 
+        {
+            nk_layout_row_dynamic(ctx, 300, 1);
+            
+            //contenido scrolleable
+            if (nk_group_begin(ctx, "PopupContent", NK_WINDOW_BORDER)) {
+                nk_layout_row_dynamic(ctx, 20, 1);
+                
+                //procesar y mostrar el contenido línea por línea
+                char *linea = strtok(state->contenido_popup, "\n");
+                while (linea != NULL) {
+                    nk_label(ctx, linea, NK_TEXT_LEFT);
+                    linea = strtok(NULL, "\n");
+                }
+                
+                nk_group_end(ctx);
+            }
+            
+            //boton para cerrar
+            nk_layout_row_dynamic(ctx, 30, 1);
+            if (nk_button_label(ctx, "Cerrar")) {
+                state->mostrar_popup_analisis = 0;
+                nk_popup_close(ctx);
+            }
+            
+            nk_popup_end(ctx);
+        } else {
+            state->mostrar_popup_analisis = 0;
+        }
+    }
+}
 
 void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado) {
     if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
@@ -69,7 +109,31 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
             }
         }
         if (nk_button_label(ctx, "Ordenar por Ocupación")) {
-            //hacer un qsort con la ocupacion, y si eso filtrar por centro
+            unsigned int n_result = 0;
+    
+            // Usar el centro seleccionado del combo
+            actividad *ordenados = ordenar_actividades_centro_por_ocupacion(
+                dataptr, 
+                n_lineas, 
+                centro_combo,  // Usar el centro seleccionado en el combo
+                &n_result
+            );
+    
+            if (ordenados && n_result > 0) {
+                // Liberar datos anteriores si existen
+                if (estado->datos_actuales != dataptr && estado->datos_actuales != NULL) {
+                    free(estado->datos_actuales);
+                }
+        
+                estado->datos_actuales = ordenados;
+                estado->n_datos_actuales = n_result;
+                estado->mostrar_favoritos = 0;
+        
+                printf("Ordenadas %u actividades del centro %s por ocupación\n", 
+                       n_result, centro[centro_combo]);
+            } else {
+                printf("No se encontraron actividades para el centro seleccionado\n");
+            }
         }
 
         nk_layout_row_template_begin(ctx, 30);
