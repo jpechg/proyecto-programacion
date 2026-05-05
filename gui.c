@@ -250,8 +250,14 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                     nk_label(ctx, row_data[j], NK_TEXT_LEFT);
                 }
                 
-                if (nk_button_label(ctx, "⭐")) {
-                    add_favoritos(dataptr, i, n_lineas);
+                if (estado -> mostrar_favoritos == 0) {
+                    if (nk_button_label(ctx, "F")) {
+                        add_favoritos(dataptr, i, n_lineas);
+                    }
+                else if (estado -> mostrar_favoritos == 1) {
+                    if (nk_button_label(ctx, "NF")) {
+                    eliminar_favoritos(dataptr[i]);
+                    }
                 }
             }
             nk_group_end(ctx);
