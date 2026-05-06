@@ -225,30 +225,17 @@ int eliminar_favoritos(actividad act_a_elim)
     {
       lineas++;
     }
-    fclose(pf);
-    fclose(pf_aux);
-    if (lineas == (contador - 1))
-    {
-      remove("Favoritos.txt");
-      rename("Favoritos_aux.txt","Favoritos.txt");
-    } else if ((lineas==contador)&& (coincidencia == 0))
-    {
-      remove("Favoritos.txt");
-      rename("Favoritos_aux.txt","Favoritos.txt");
-    } else
-    {
-      printf("HA HABIDO UN ERROR\n");
+    remove("Favoritos.txt");
+    rename("Favoritos_aux.txt", "Favoritos.txt");
+
+    if (coincidencia == 1) {
+        printf("Se han eliminado todas las instancias con éxito\n");
+        return 1;
+    } else {
+        printf("NO ESTA EN FAVORITOS\n");
+        return -1;
     }
-    if (coincidencia == 1)
-    {
-      printf("Se ha eliminado con exito\n");
-      return 1;
-    } else
-    {
-      printf("NO ESTA EN FAVORITOS o ha habido un error\n");
-      return -1;
-    }
-}
+  }
 //Esta funcion actividad comprueba cual es la actividad mas popular en cada centro.
 int actividad_popular(actividad *dataptr, unsigned int lineas, uint32_t c) {
   unsigned int contador[N_ACTS] = {0};
