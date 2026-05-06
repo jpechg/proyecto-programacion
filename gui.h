@@ -18,6 +18,7 @@ typedef struct {
     int actividad_analizada;
     int centro_analizado;
     int actividad_popular;
+    int recargar_f;
 } struct_estado_app;
 
 void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado);

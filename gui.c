@@ -149,6 +149,11 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
                     estado->mostrar_favoritos = 1;
         }
+        if (estado->mostrar_favoritos == 1) {
+            if (nk_button_label(ctx,"VOLVER")){
+                estado->mostrar_favoritos = 0;
+            }
+        }
         if (nk_button_label(ctx, "Centros 100% Ocupación")) {
             unsigned int n_result = 0;
             actividad *llenos = centros_llenos(dataptr, n_lineas, &n_result);
@@ -254,11 +259,13 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 if (estado -> mostrar_favoritos == 0) {
                     if (nk_button_label(ctx, "F")) {
                         add_favoritos(dataptr, i, n_lineas);
+                        estado->recargar_f=1;
                     }
                 }
                 else if (estado -> mostrar_favoritos == 1) {
                     if (nk_button_label(ctx, "NF")) {
-                    eliminar_favoritos(dataptr[i]);
+                    if (eliminar_favoritos(datos_mostrar[i])==1)
+                    estado->recargar_f = 1;
                     }
                 }
             }

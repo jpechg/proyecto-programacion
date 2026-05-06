@@ -73,17 +73,40 @@ int main(int argc, char *argv[]) {
         }
         nk_input_end(ctx);
 
+        if (estado.recargar_f== 1){
+            if (dataptr_favs) free(dataptr_favs);
+            n_favs = longitud_favoritos();
+            dataptr_favs = leer_favoritos(n_favs);
+            estado.recargar_f = 0;
+        }
+
         if (estado.mostrar_favoritos) {
             // Recargar favoritos cada vez
             if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
-            dataptr_favs = leer_favoritos(n_favs);
-            
-            if (dataptr_favs && n_favs > 0) {
-                render_app(ctx, dataptr_favs, n_favs, &estado);
+            if (n_favs > 0) {
+                dataptr_favs = leer_favoritos(n_favs);
+                if (dataptr_favs){
+                    render_app(ctx, dataptr_favs, n_favs, &estado);
+                } else {
+                    nk_layout_row_dynamic(ctx,30,1);
+                    nk_label(ctx,"Error al cargar favoritos", NK_TEXT_CENTERED);
+                    if (nk_button_label(ctx,"VOLVER")) {
+                        estado.mostrar_favoritos = 0;
+                    }
+                }
             } else {
-                estado.mostrar_favoritos = 0; // Volver a vista normal
-                render_app(ctx, dataptr, n_lineas, &estado);
+                nk_layout_row_dynamic(ctx, 30, 1);
+                nk_label(ctx,"Aun no has guardado favoritos",NK_TEXT_CENTERED);
+                if (nk_button_label(ctx,"VOLVER")){
+                    estado.mostrar_favoritos = 0;
+                }
+            }
+            if (estado.recargar_f == 1) {
+                if (dataptr_favs) free(dataptr_favs);
+                n_favs = longitud_favoritos();
+                dataptr_favs = leer_favoritos(n_favs);
+                estado.recargar_f = 0;
             }
         } else {
             render_app(ctx, dataptr, n_lineas, &estado);
