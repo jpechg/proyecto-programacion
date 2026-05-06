@@ -225,6 +225,8 @@ int eliminar_favoritos(actividad act_a_elim)
     {
       lineas++;
     }
+    fclose(pf);
+    fclose(pf_aux);
     remove("Favoritos.txt");
     rename("Favoritos_aux.txt", "Favoritos.txt");
 
