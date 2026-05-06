@@ -6,6 +6,7 @@
 #include "utilidades.h"
 #include "gui.h"
 #include "ordenar.h"
+#include "busqueda.h"
 
 // Funcion para renderizar el popup de analisis
 static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *estado) {
@@ -118,16 +119,41 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         static int centro_combo = 0;
         static int actividad_combo = 0;
         static int modo_combo = 0;
-        static char buffer_busqueda[256];
-        static int len_busqueda;
 
-        nk_edit_string(ctx, NK_EDIT_FIELD, buffer_busqueda, &len_busqueda, 255, nk_filter_default);
         const char *options[] = {"Frecuencia Diaria", "Más Popular", "Evolución Gráfica"};
         int seleccion_1 = 0;
         int seleccion_modo = 0;
         centro_combo = nk_combo(ctx, centro, N_CENTROS, centro_combo, 25, nk_vec2(200, 200));
         actividad_combo = nk_combo(ctx, actividades, N_ACTS, actividad_combo, 25, nk_vec2(200, 200));
         modo_combo = nk_combo(ctx, options, 3, modo_combo, 25, nk_vec2(200, 200));
+
+        if (nk_button_label(ctx,"Ejecutar búsqueda"))
+        {
+            if (estado->datos_actuales != dataptr && estado->datos_actuales != NULL){
+                free(estado->datos_actuales);
+            }
+
+            unsigned int resultados_busqueda = 0;
+            actividad *Filtradas = buscar(dataptr,n_lineas,centro_combo,actividad_combo, &resultados_busqueda);
+
+            if (Filtradas && resultados_busqueda > 0){
+                estado -> datos_actuales = Filtradas;
+                estado -> n_datos_actuales = resultados_busqueda;
+                estado -> mostrar_favoritos = 0;
+            } else {
+                estado->datos_actuales = NULL;
+                estado ->n_datos_actuales = 0;
+            }
+        }
+        if (estado->datos_actuales != NULL && estado->datos_actuales != dataptr) {
+            nk_layout_row_dynamic(ctx, 30, 1);
+
+            if (nk_button_label(ctx, "VOLVER")) {
+                free(estado->datos_actuales);
+                estado->datos_actuales = NULL; 
+                estado->n_datos_actuales = 0;
+            }
+    }
         
         if (nk_button_label(ctx, "Ejecutar Análisis")) {
             if (modo_combo == 0) { // Frecuencia Diaria
@@ -144,6 +170,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 estado->mostrar_popup_analisis = 1;
             }
         }
+
         //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {

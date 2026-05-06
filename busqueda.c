@@ -1,43 +1,37 @@
-//esta funcion lo que hace es buscar por un filtro(mes,año,actividad...) máximo de dos condiciones.
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include "reader.h"
-int *buscar_actividad (actividad *data,unsigned int n_data,int *coincidentes,int indice, uint32_t valor)
+
+//Vamos a realizar una busqueda por 2 filtros, centro y actividad
+actividad *buscar(actividad *dataptr, unsigned int n_lineas, uint32_t centro, uint32_t act,unsigned int *n_result)
 {
-    int *indices_coincidentes = malloc(sizeof(int)*n_data);
-    if (indices_coincidentes == NULL) {
-        printf("Ha habido un error");
+    actividad *coincidencias;
+    unsigned int i=0;
+    unsigned int numero_coinc = 0;
+    unsigned int contador = 0;
+    for (i=0;i<n_lineas;i++)
+    {
+        if ((dataptr[i].centro == centro) && (dataptr[i].actividad == act))
+        {
+            contador++;
+        }
+    }
+    coincidencias = malloc(sizeof(actividad) * contador);
+    if (coincidencias == NULL) {
+        *n_result = 0;
         return NULL;
     }
-    int coincidencias = 0;
-    for (int i=0;i<n_data; i++)
+    contador=0;
+    for (i=0;i<n_lineas;i++)
     {
-        uint32_t *campos = (uint32_t*)&data[i]; //esto esta trasformando el struct en un vector
-        //el struct solo contiene enteros, asi que se puede tratar de esta forma
-        if (campos[indice] == valor)
+        if ((dataptr[i].centro == centro) && (dataptr[i].actividad == act))
         {
-            indices_coincidentes[coincidencias] = i;
-            coincidencias++;
+            coincidencias[contador] = dataptr[i];
+            contador++;
         }
     }
-    *coincidentes = coincidencias;
-    return indices_coincidentes;
+    *n_result = contador;
+    return coincidencias;
 }
-int filtrado_doble(actividad *data,int *indices_entrada, int n_entrada,int campo,uint32_t valor, int *indices_salida)
-{
-    int n_final = 0;
-    for (int i =0;i<n_entrada;i++)
-    {
-        uint32_t *campos = (uint32_t*)&data[indices_entrada[i]];
-        if (campos[campo] == valor)
-        {
-            indices_salida[n_final] = indices_entrada[i];
-            n_final++;
-        }
-    }
-    return n_final;
-}
-
-
