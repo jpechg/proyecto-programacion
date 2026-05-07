@@ -7,6 +7,7 @@
 #include "gui.h"
 #include "ordenar.h"
 #include "busqueda.h"
+#include "graficas.h"
 
 // Funcion para renderizar el popup de analisis
 static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *estado) {
@@ -120,7 +121,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         static int actividad_combo = 0;
         static int modo_combo = 0;
 
-        const char *options[] = {"Frecuencia Diaria", "Más Popular", "Evolución Gráfica"};
+        const char *options[] = {"Frecuencia Diaria", "Más Popular", "Generar Gráfica"};
         int seleccion_1 = 0;
         int seleccion_modo = 0;
         centro_combo = nk_combo(ctx, centro, N_CENTROS, centro_combo, 25, nk_vec2(200, 200));
@@ -191,6 +192,10 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 estado->tipo_analisis = 1;
                 estado->centro_analizado = centro_combo;
                 estado->mostrar_popup_analisis = 1;
+            }
+            else if (modo_combo == 2) { // crear grafica
+                //crea la grafica para el centro seleccionado en el dropdown
+                crear_grafica_top_actividades(dataptr, n_lineas, centro_combo);
             }
         }
 

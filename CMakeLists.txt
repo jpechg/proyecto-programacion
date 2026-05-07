@@ -18,6 +18,7 @@ set(SOURCES
     gui.c
     src/glad.c
     ordenar.c
+    graficas.c
     busqueda.c
     utilidades.c
     reader.c
