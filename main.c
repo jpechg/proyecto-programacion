@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
             if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
             if (n_favs > 0) {
-                //dataptr_favs = leer_favoritos(n_favs);
+                dataptr_favs = leer_favoritos(n_favs);
                 if (dataptr_favs){
                     render_app(ctx, dataptr_favs, n_favs, &estado);
                 } else {
