@@ -197,13 +197,22 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos ⭐")) {
+            unsigned int n_favs = longitud_favoritos();
+            if (n_favs > 0) {
+                actividad *dataptr_favs = leer_favoritos(n_favs);
+                if (dataptr_favs){
                     estado->mostrar_favoritos = 1;
+                } else {
+                    estado->mostrar_favoritos = 0;
+                }
+            }
         }
         if (estado->mostrar_favoritos == 1) {
             if (nk_button_label(ctx,"VOLVER")){
                 estado->mostrar_favoritos = 0;
             }
         }
+        
         if (nk_button_label(ctx, "Actividades llenas")) {
             unsigned int n_result = 0;
             actividad *llenos = actividades_llenas(dataptr, n_lineas, &n_result);
