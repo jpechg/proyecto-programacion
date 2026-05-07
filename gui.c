@@ -258,7 +258,6 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
 
             actividad *datos_mostrar = estado -> datos_actuales ? estado -> datos_actuales : dataptr;
             unsigned int n_mostrar = estado -> datos_actuales ? estado -> n_datos_actuales : n_lineas;
-            printf("Debug: n_mostrar: %u", n_mostrar);
             for (unsigned int i = 0; i < n_mostrar; i++) {
                 fill_row_data(row_data, datos_mostrar[i]);
                 
