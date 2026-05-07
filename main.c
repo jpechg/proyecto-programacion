@@ -72,14 +72,14 @@ int main(int argc, char *argv[]) {
             nk_sdl_handle_event(&evt);
         }
         nk_input_end(ctx);
-
+/*
         if (estado.recargar_f== 1){
             if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
             dataptr_favs = leer_favoritos(n_favs);
             estado.recargar_f = 0;
         }
-
+*/
         if (estado.mostrar_favoritos == 1) {
             // Recargar favoritos cada vez
             if (dataptr_favs) free(dataptr_favs);

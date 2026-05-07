@@ -10,23 +10,12 @@ int actividad_ocupada(actividad *dataptr, unsigned int i) {
     }
     return 0;
 }
-actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado)
+actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado)
 {
     actividad *resultado = NULL;
     unsigned int n = 0;
     for (unsigned int i = 0; i < n_lineas; i++) {
-        int todas_llenas = 1;
-        int no_vacio = 0;
-        for (unsigned int j = 0; j < n_lineas; j++) {
-            if (dataptr[j].centro == dataptr[i].centro) {
-                no_vacio = 1;
-                if (dataptr[j].libre == 0) {
-                    todas_llenas = 0;
-                    break; //usamos un break puntual para no ejecutar todo el loop de forma superflua
-                }
-            }
-        }
-        if (no_vacio && todas_llenas) {
+        if (dataptr[i].libre == 0) {
             actividad *tmp = realloc(resultado, sizeof(actividad) * (n + 1)); //usamos realloc para que el codigo sea mas compacto, pero seria mas eficiente 2 pasadas por los datos para hacer un solo malloc
             if (!tmp) {
               printf("Sin memoria al intentar un realloc\n");
@@ -35,7 +24,9 @@ actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned in
             }
             resultado = tmp;
             resultado[n++] = dataptr[i];
+            break; //usamos un break puntual para no ejecutar todo el loop de forma superflua
         }
+
     }
 
     *n_resultado = n;

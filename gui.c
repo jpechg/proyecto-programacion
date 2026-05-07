@@ -181,9 +181,9 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 estado->mostrar_favoritos = 0;
             }
         }
-        if (nk_button_label(ctx, "Centros 100% Ocupación")) {
+        if (nk_button_label(ctx, "Actividades llenas")) {
             unsigned int n_result = 0;
-            actividad *llenos = centros_llenos(dataptr, n_lineas, &n_result);
+            actividad *llenos = actividades_llenas(dataptr, n_lineas, &n_result);
             
             if (llenos && n_result > 0) {
                 //liberar datos actuales si existen y no son los originales
@@ -192,9 +192,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 }
                 estado->datos_actuales = llenos;
                 estado->n_datos_actuales = n_result;
-                estado->mostrar_favoritos = 2;
-                
-                printf("Encontrados %u centros con 100%% ocupación\n", n_result);
+                estado->mostrar_favoritos = 0;
             }
         }
         if (nk_button_label(ctx, "Ordenar por Ocupación")) {
@@ -216,7 +214,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         
                 estado->datos_actuales = ordenados;
                 estado->n_datos_actuales = n_result;
-                estado->mostrar_favoritos = 3;
+                estado->mostrar_favoritos = 0;
         
                 printf("Ordenadas %u actividades del centro %s por ocupación\n", 
                        n_result, centro[centro_combo]);
@@ -260,7 +258,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
 
             actividad *datos_mostrar = estado -> datos_actuales ? estado -> datos_actuales : dataptr;
             unsigned int n_mostrar = estado -> datos_actuales ? estado -> n_datos_actuales : n_lineas;
-            
+            printf("Debug: n_mostrar: %u", n_mostrar);
             for (unsigned int i = 0; i < n_mostrar; i++) {
                 fill_row_data(row_data, datos_mostrar[i]);
                 

@@ -4,7 +4,7 @@
 int actividad_ocupada(actividad *dataptr, unsigned int i);
 
 //analisis y filtrado
-actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado);
+actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado);
 actividad *ordenar_por_ocupacion(actividad *dataptr, unsigned int n_lineas, uint32_t centro, unsigned int *n_resultado);
 void frecuencia_diaria_actividad(actividad *dataptr, unsigned int n_lineas, uint32_t actividad_id, unsigned int resultado[31]);
 int actividad_popular(actividad *dataptr, unsigned int lineas, uint32_t c);
