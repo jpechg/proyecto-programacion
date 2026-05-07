@@ -20,7 +20,7 @@ actividad *centros_llenos(actividad *dataptr, unsigned int n_lineas, unsigned in
         for (unsigned int j = 0; j < n_lineas; j++) {
             if (dataptr[j].centro == dataptr[i].centro) {
                 no_vacio = 1;
-                if (!actividad_ocupada(dataptr, j)) {
+                if (dataptr[j].libre == 0) {
                     todas_llenas = 0;
                     break; //usamos un break puntual para no ejecutar todo el loop de forma superflua
                 }

@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
             estado.recargar_f = 0;
         }
 
-        if (estado.mostrar_favoritos) {
+        if (estado.mostrar_favoritos == 1) {
             // Recargar favoritos cada vez
             if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();

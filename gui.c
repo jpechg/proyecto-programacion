@@ -192,7 +192,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 }
                 estado->datos_actuales = llenos;
                 estado->n_datos_actuales = n_result;
-                estado->mostrar_favoritos = 0;
+                estado->mostrar_favoritos = 2;
                 
                 printf("Encontrados %u centros con 100%% ocupación\n", n_result);
             }
@@ -216,7 +216,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         
                 estado->datos_actuales = ordenados;
                 estado->n_datos_actuales = n_result;
-                estado->mostrar_favoritos = 0;
+                estado->mostrar_favoritos = 3;
         
                 printf("Ordenadas %u actividades del centro %s por ocupación\n", 
                        n_result, centro[centro_combo]);
@@ -298,6 +298,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
             }
             nk_group_end(ctx);
         }
+    render_popup_analisis(ctx,estado);    
     }
     nk_end(ctx);
 }
@@ -312,6 +313,6 @@ void fill_row_data(char dest[11][512], actividad v) {
     strcpy(dest[6], modalidad[v.modalidad]);
     strcpy(dest[7], centro[v.centro]);
     sprintf(dest[8], "%d", v.total);
-    sprintf(dest[9], "%d", v.ocupado);
-    sprintf(dest[10], "%d", v.libre);
+    sprintf(dest[9], "%d", v.libre);
+    sprintf(dest[10], "%d", v.ocupado);
 }
