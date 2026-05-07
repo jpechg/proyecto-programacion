@@ -49,12 +49,7 @@ int main(int argc, char *argv[]) {
     nk_sdl_font_stash_begin(&atlas);
 
     sans = nk_font_atlas_add_from_file(atlas, "LiberationSans-Regular.ttf", 18, &config); //carga la fuente de texto
-
-    static const nk_rune emojis_rango[] = {0x1f600, 0x1f64f, 0};
-    
-    config.merge_mode = 1; 
-    nk_font_atlas_add_from_file(atlas, "NotoEmoji-Regular.ttf", 18, &config);
-
+  
     nk_sdl_font_stash_end();
 
     nk_style_set_font(ctx, &sans->handle);    
@@ -82,24 +77,14 @@ int main(int argc, char *argv[]) {
 
         if (estado.mostrar_favoritos == 1) {
             // Recargar favoritos cada vez
-            if (dataptr_favs) free(dataptr_favs);
+            //if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
             if (n_favs > 0) {
                 dataptr_favs = leer_favoritos(n_favs);
                 if (dataptr_favs){
                     render_app(ctx, dataptr_favs, n_favs, &estado);
-                } else {
-                    nk_layout_row_dynamic(ctx,30,1);
-                    nk_label(ctx,"Error al cargar favoritos", NK_TEXT_CENTERED);
-                    if (nk_button_label(ctx,"VOLVER")) {
-                        estado.mostrar_favoritos = 0;
-                    }
-                }
             } else {
-                nk_layout_row_dynamic(ctx, 30, 1);
-                nk_label(ctx,"Aun no has guardado favoritos",NK_TEXT_CENTERED);
-                if (nk_button_label(ctx,"VOLVER")){
-                    estado.mostrar_favoritos = 0;
+                estado.mostrar_favoritos = 0;
                 }
             }
             if (estado.recargar_f == 1) {
@@ -107,6 +92,7 @@ int main(int argc, char *argv[]) {
                 n_favs = longitud_favoritos();
                 dataptr_favs = leer_favoritos(n_favs);
                 estado.recargar_f = 0;
+                if (n_favs == 0)  estado.mostrar_favoritos = 0; //prevenir el caso de que ya no haya favoritos
             }
         } else {
             render_app(ctx, dataptr, n_lineas, &estado);
