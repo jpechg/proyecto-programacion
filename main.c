@@ -17,7 +17,14 @@
 #include "gui.h"
 
 int main(int argc, char *argv[]) {
-    /* 1. SDL & OpenGL Setup */
+    //comprobar que existe Favoritos.txt
+    FILE *favoritos = fopen("Favoritos.txt", "a");
+    if (favoritos == NULL) {
+        printf("Fallo al crear favoritos.txt");
+        return 1;
+    }
+    fclose(favoritos);
+    //Inicializar OpenGL y SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -32,7 +39,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Failed to initialize GLAD\n");
         return -1;
     }
-    /* 2. Nuklear SDL/GL3 Setup */
+    //Inicializar Nuklear
     struct nk_context *ctx = nk_sdl_init(win);
 
     struct nk_font_atlas *atlas;
@@ -53,7 +60,7 @@ int main(int argc, char *argv[]) {
     nk_style_set_font(ctx, &sans->handle);    
     int running = 1;
 
-    struct_estado_app estado = {0};
+    struct_estado_app estado = {0}; //iniciamos el struct de estado
     estado.datos_actuales = NULL;
     estado.n_datos_actuales = 0;
     estado.mostrar_favoritos = 0;
@@ -72,20 +79,13 @@ int main(int argc, char *argv[]) {
             nk_sdl_handle_event(&evt);
         }
         nk_input_end(ctx);
-/*
-        if (estado.recargar_f== 1){
-            if (dataptr_favs) free(dataptr_favs);
-            n_favs = longitud_favoritos();
-            dataptr_favs = leer_favoritos(n_favs);
-            estado.recargar_f = 0;
-        }
-*/
+
         if (estado.mostrar_favoritos == 1) {
             // Recargar favoritos cada vez
             if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
             if (n_favs > 0) {
-                dataptr_favs = leer_favoritos(n_favs);
+                //dataptr_favs = leer_favoritos(n_favs);
                 if (dataptr_favs){
                     render_app(ctx, dataptr_favs, n_favs, &estado);
                 } else {

@@ -24,7 +24,6 @@ actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigne
             }
             resultado = tmp;
             resultado[n++] = dataptr[i];
-            break; //usamos un break puntual para no ejecutar todo el loop de forma superflua
         }
 
     }

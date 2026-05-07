@@ -4,84 +4,105 @@
 #include <stdint.h>
 #include "reader.h" 
 
-#define TOP_N 10
+#define TOP_N_ACT 10
 
-//esta estructura sirve para agrupar los resultados finales.
 typedef struct {
-    const char *nombre;
+    const char *nombre_actividad;
     uint32_t ocupacion_total;
-} ResultadoCentro;
+} ResultadoActividad;
 
-//ahora ordenamos de mayor a menor ocupacion.
-int comparar_resultados(const void *a, const void *b) {
-    ResultadoCentro *resA = (ResultadoCentro *)a;
-    ResultadoCentro *resB = (ResultadoCentro *)b;
-    return resB->ocupacion_total - resA->ocupacion_total;
+//funcion para qsort, que compara la ocupacion de 2 actividades
+int comparar_actividades(const void *a, const void *b) {
+    ResultadoActividad *resA = (ResultadoActividad *)a;
+    ResultadoActividad *resB = (ResultadoActividad *)b;
+    if (resB->ocupacion_total > resA->ocupacion_total) return 1;
+    if (resB->ocupacion_total < resA->ocupacion_total) return -1;
+    return 0;
 }
 
-// Creamos la gráfica usando el dataptr de actividades.
-void crear_grafica(actividad *dataptr, unsigned int n_lineas) {
-    // 1) Creamos un array para acumular ocupación por cada uno de los 65 centros
-    ResultadoCentro resultados[N_CENTROS];
-    
-    //inicializamos el array de resultados con los nombres del reader.h
-    for (int i = 0; i < N_CENTROS; i++) {
-        resultados[i].nombre = centro[i];
+void crear_grafica_top_actividades(actividad *dataptr, unsigned int n_lineas, uint32_t id_centro) {
+    if (id_centro >= N_CENTROS) {
+        printf("ID de centro no válido.\n");
+        return;
+    }
+
+    // 1) Inicializamos array de resultados para todas las actividades posibles
+    ResultadoActividad resultados[N_ACTS];
+    for (int i = 0; i < N_ACTS; i++) {
+        resultados[i].nombre_actividad = actividades[i];
         resultados[i].ocupacion_total = 0;
     }
 
-    //procesamos el dataptr, sumamos la ocupación acumulada por cada centro
+    // 2) Filtramos por el centro elegido y sumamos ocupación por actividad
+    int datos_encontrados = 0;
     for (unsigned int i = 0; i < n_lineas; i++) {
-        uint32_t idx_centro = dataptr[i].centro;
-        if (idx_centro < N_CENTROS) {
-            resultados[idx_centro].ocupacion_total += dataptr[i].ocupado;
+        if (dataptr[i].centro == id_centro) {
+            uint32_t idx_act = dataptr[i].actividad;
+            if (idx_act < N_ACTS) {
+                resultados[idx_act].ocupacion_total += dataptr[i].ocupado;
+                datos_encontrados = 1;
+            }
         }
     }
 
-    //ordenamos los resultados de mayor a menor
-    qsort(resultados, N_CENTROS, sizeof(ResultadoCentro), comparar_resultados);
+    if (!datos_encontrados) {
+        printf("No hay datos para el centro: %s\n", centro[id_centro]);
+        return;
+    }
 
-    //escribimos los datos para Gnuplot (Top 10)
-    FILE *f_plot = fopen("ranking.dat", "w");
+    // 3) Ordenamos para obtener las más ocupadas
+    qsort(resultados, N_ACTS, sizeof(ResultadoActividad), comparar_actividades);
+
+    // 4) Escribimos datos para Gnuplot (Top 10)
+    FILE *f_plot = fopen("top_actividades.dat", "w");
     if (!f_plot) return;
-
-    for (int i = 0; i < TOP_N; i++) {
-        fprintf(f_plot, "\"%s\" %u\n", resultados[i].nombre, resultados[i].ocupacion_total);
+    for (int i = 0; i < TOP_N_ACT; i++) {
+        // Solo escribimos si la ocupación es mayor que cero
+        if (resultados[i].ocupacion_total > 0) {
+            fprintf(f_plot, "\"%s\" %u\n", resultados[i].nombre_actividad, resultados[i].ocupacion_total);
+        }
     }
     fclose(f_plot);
 
-    //configuramos la grafica para Gnuplot.
-    FILE *f_script = fopen("config.gp", "w");
+// 5) Script de Gnuplot robusto con persistencia y fuentes grandes
+    FILE *f_script = fopen("config_act.gp", "w");
     if (!f_script) return;
 
-    fprintf(f_script, "set title 'Top 10 Centros con Mayor Ocupacion'\n");
-    fprintf(f_script, "set ylabel 'Plazas Ocupadas (Total)'\n");
-    fprintf(f_script, "set style fill solid 0.7 border -1\n");
-    fprintf(f_script, "set xtics rotate by -45\n");
-    fprintf(f_script, "set bmargin 10\n"); // Margen extra para nombres largos
-    fprintf(f_script, "plot 'ranking.dat' using 2:xtic(1) with boxes title 'Ocupacion'\n");
-    fprintf(f_script, "pause -1 'Pulsa Enter para cerrar'\n");
+    // Definimos el terminal para que la ventana sea grande (1200x800 píxeles)
+    // Esto evita que las fuentes grandes amontonen el contenido
+    fprintf(f_script, "set terminal qt size 1200,800 font 'Arial,12'\n");
+
+    fprintf(f_script, "set title 'Top 10 Actividades en %s' font 'Arial,18'\n", centro[id_centro]);
+    fprintf(f_script, "set ylabel 'Plazas Ocupadas' font 'Arial,14'\n");
+    
+    // Configuración de etiquetas del eje X con fuente grande y rotación
+    fprintf(f_script, "set xtics rotate by -45 font 'Arial,12' offset 0,-1.5\n");
+    
+    // Aumentamos los márgenes significativamente para que no se corte nada
+    fprintf(f_script, "set bmargin 15\n"); 
+    fprintf(f_script, "set lmargin 10\n"); 
+    
+    fprintf(f_script, "set style fill solid 0.8 border -1\n");
+    fprintf(f_script, "set boxwidth 0.6\n");
+    fprintf(f_script, "plot 'top_actividades.dat' using 2:xtic(1) with boxes notitle\n");
+    
     fclose(f_script);
 
-    //ejecutamos Gnuplot.
-    printf("Procesando %u registros y generando grafica...\n", n_lineas);
-    system("gnuplot config.gp");
+    // USAMOS EL FLAG -persist PARA QUE LA VENTANA NO SE CIERRE
+    printf("Generando grafica... Cierra la ventana de Gnuplot para continuar.\n");
+    system("gnuplot -persist config_act.gp");
 }
 
 int main() {
     unsigned int n_lineas = 0;
-    
-    // dataptr recibirá el malloc que hacemos en read_csv.
     actividad *dataptr = read_csv("dataset.csv", &n_lineas);
 
     if (dataptr != NULL && n_lineas > 0) {
-        // Generamos la gráfica usando el puntero a la memoria
-        crear_grafica(dataptr, n_lineas);
-
-        // Liberamos la memoria.
+        // Ejemplo: Top 10 para el centro "Francisco_Fernandez_Ochoa" (ID 0)
+        crear_grafica_top_actividades(dataptr, n_lineas, 0);
         free(dataptr);
     } else {
-        printf("Error: No se pudieron cargar datos desde el archivo.\n");
+        printf("Error al cargar los datos.\n");
     }
 
     return 0;
