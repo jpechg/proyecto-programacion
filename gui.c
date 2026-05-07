@@ -141,10 +141,33 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 estado -> n_datos_actuales = resultados_busqueda;
                 estado -> mostrar_favoritos = 0;
             } else {
+                estado-> mostrar_popup_busqueda = 1;
                 estado->datos_actuales = NULL;
                 estado ->n_datos_actuales = 0;
             }
+
+           
         }
+
+         if (estado->mostrar_popup_busqueda){
+                struct nk_rect popup_bounds = nk_rect(350,200,400,200);
+
+                if(nk_popup_begin(ctx, NK_POPUP_STATIC, "Búsqueda",  NK_WINDOW_BORDER | NK_WINDOW_TITLE | NK_WINDOW_CLOSABLE, popup_bounds)){
+                    nk_layout_row_dynamic(ctx, 40, 1);
+                    nk_label(ctx,"NO ESTA LA ACTIVIDAD EN EL CENTRO",NK_TEXT_CENTERED);
+
+                    nk_layout_row_dynamic(ctx,25,1);
+                    if (nk_button_label(ctx,"Cerrar"))
+                    {
+                        estado->mostrar_popup_busqueda = 0;
+                        nk_popup_close(ctx);
+                    }
+                    nk_popup_end(ctx);
+                } else {
+                    estado->mostrar_popup_busqueda = 0;
+                }
+                
+            }
         if (estado->datos_actuales != NULL && estado->datos_actuales != dataptr) {
             nk_layout_row_dynamic(ctx, 30, 1);
 

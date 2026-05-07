@@ -13,6 +13,7 @@ typedef struct {
     int actividad_seleccionada;
 
     int mostrar_popup_analisis;
+    int mostrar_popup_busqueda;
     int tipo_analisis; // 0: frecuencia, 1: popular
     unsigned int frecuencias[31]; // Para frecuencia diaria
     int actividad_analizada;
