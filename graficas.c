@@ -82,6 +82,6 @@ void crear_grafica_top_actividades(actividad *dataptr, unsigned int n_lineas, ui
 
     // Ejecución con -persist para mantener la ventana abierta
     printf("Generando grafica...\n");
-    system("gnuplot/bin/gnuplot.exe config_act.gp");
+    system("gnuplot\\bin\\gnuplot.exe config_act.gp");
     system("start grafico.png");
 }
