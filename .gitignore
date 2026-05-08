@@ -1,6 +1,5 @@
 # --- Build Directories ---
 /build/
-/build-win/
 /bin/
 /out/
 
