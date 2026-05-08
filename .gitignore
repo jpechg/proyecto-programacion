@@ -12,14 +12,12 @@
 
 # --- Compiled Binaries & Objects ---
 programacion1
-*.exe
 *.out
 *.app
 *.o
 *.obj
 *.so
 *.dylib
-*.dll
 
 # --- Temporary / Lock Files ---
 .~lock.*#
