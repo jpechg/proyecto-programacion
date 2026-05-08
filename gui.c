@@ -110,7 +110,7 @@ static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *est
 
 
 void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_lineas, struct_estado_app *estado) {
-    if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1200, 700),
+    if (nk_begin(ctx, "Visor de Actividades Deportivas", nk_rect(10, 10, 1280, 720),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_TITLE)) 
     {
         //Seccion de arriba (selectores para buscar)

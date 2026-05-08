@@ -31,36 +31,6 @@ actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigne
     *n_resultado = n;
     return resultado;  //despues de llamar la funcion, usar free
 }
-static int comp_por_ocupacion(const void *a_void, const void *b_void)
-{
-    const actividad *a = (const actividad *)a_void;
-    const actividad *b = (const actividad *)b_void;
-
-    /* cast to int to avoid unsigned wraparound */
-    return b->ocupado >= a->ocupado;
-}
-actividad *ordenar_por_ocupacion(actividad *dataptr, unsigned int n_lineas, uint32_t centro, unsigned int *n_resultado)
-{
-    //contar cuantos elementos tienen este centro
-    unsigned int n = 0;
-    for (unsigned int i = 0; i < n_lineas; i++) {
-        if (centro == UINT32_MAX || dataptr[i].centro == centro)
-            n++;
-    }
-    actividad *copia = malloc(sizeof(actividad) * n);
-    if (!copia) {
-        printf("Sin memoria al ordenar por ocupacion\n");
-        return NULL;
-    }
-    unsigned int j = 0;
-    for (unsigned int i = 0; i < n_lineas; i++) {
-        if (centro == UINT32_MAX || dataptr[i].centro == centro)
-            copia[j++] = dataptr[i];
-    }
-    qsort(copia, n, sizeof(actividad), comp_por_ocupacion);
-    *n_resultado = n;
-    return copia; //ejecutar free tras llamada
-}
 void frecuencia_diaria_actividad(actividad *dataptr, unsigned int n_lineas, uint32_t actividad_id, unsigned int resultado[31]) {
 
     for (unsigned int i = 0; i < 31; i++) {
