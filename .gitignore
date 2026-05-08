@@ -17,6 +17,7 @@ programacion1
 *.obj
 *.so
 *.dylib
+SDL2.dll
 
 # --- Temporary / Lock Files ---
 .~lock.*#
