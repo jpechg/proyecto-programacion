@@ -26,6 +26,15 @@ set(SOURCES
 
 add_executable(programacion1 ${SOURCES})
 
+target_compile_options(programacion1 PRIVATE -Wall)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # -g for debug symbols, and static ASan
+    target_compile_options(programacion1 PRIVATE -g)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(programacion1 PRIVATE -O2)
+endif()
+
 # Modern approach: Include directories specific to the target
 target_include_directories(programacion1 PRIVATE 
     include 
@@ -55,4 +64,5 @@ if(WIN32)
 endif()
 
 # Copy assets
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/gnuplot" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/dataset.csv" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
