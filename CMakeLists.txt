@@ -26,7 +26,7 @@ set(SOURCES
 
 add_executable(programacion1 ${SOURCES})
 
-target_compile_options(programacion1 PRIVATE -Wall)
+target_compile_options(programacion1 PRIVATE -Wall -O2)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # -g for debug symbols, and static ASan
