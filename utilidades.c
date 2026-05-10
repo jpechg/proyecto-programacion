@@ -10,6 +10,7 @@ int actividad_ocupada(actividad *dataptr, unsigned int i) {
     }
     return 0;
 }
+//Esta funcion se encarga de ver que activididades estan llenas devuelve un puntero de structs actividad.
 actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigned int *n_resultado)
 {
     actividad *resultado = NULL;
@@ -31,6 +32,7 @@ actividad *actividades_llenas(actividad *dataptr, unsigned int n_lineas, unsigne
     *n_resultado = n;
     return resultado;  //despues de llamar la funcion, usar free
 }
+//Esta funcion se encarga de buscar la frecuencia diaria que posee una actividad diariamente.
 void frecuencia_diaria_actividad(actividad *dataptr, unsigned int n_lineas, uint32_t actividad_id, unsigned int resultado[31]) {
 
     for (unsigned int i = 0; i < 31; i++) {
@@ -64,6 +66,7 @@ int add_favoritos(actividad *dataptr,uint32_t valor,unsigned int n_datos)
     fclose(pf);
     return 1;
 }
+//Esta funcion se encarga de leer el nunmero de favoritos.
 int longitud_favoritos()
 {
   char linea[2048];
