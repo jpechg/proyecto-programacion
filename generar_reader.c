@@ -6,10 +6,12 @@
 
 //para añadir strings unicos a un array (para generar los enums/arrays)
 int add_unique(char items[][MAX_STR_LEN], int *count, char *new_item) {
+    //si no es un item nuevo, salir de la funcion sin hacer nada
     for (int i = 0; i < *count; i++) {
         if (strcmp(items[i], new_item) == 0) return i;
     }
     if (*count < MAX_ITEMS) {
+        //si no nos hemos pasado del numero de items maximo (para prevenir overflows), guardar el string en el array de items unicos. New item es nuevo seguro porque si no, en el loop anterior habriamos salido de la funcion
         strcpy(items[*count], new_item);
         (*count)++;
         return *count - 1;
@@ -18,6 +20,7 @@ int add_unique(char items[][MAX_STR_LEN], int *count, char *new_item) {
 }
 
 void print_array(FILE* f, char* name, char items[][MAX_STR_LEN], int count) {
+    //imprime al archivo que pasamos como f un string como {"str1","str2"}...
     fprintf(f, "char *%s[%d] = {", name, count);
     for (int i = 0; i < count; i++) {
         fprintf(f, "\"%s\"%s", items[i], (i == count - 1) ? "" : ", ");
@@ -49,10 +52,12 @@ int main() {
     unsigned int y, m, d, h0, mi0, hf, mif, tot, ocu, lib;
 
     while (fgets(line, sizeof(line), csv)) {
+        //leemos linea por linea el dataset
         int res = sscanf(line, "%u %u %u %s %u:%u %u:%u %s %s %s %u %u %u %s", 
                &y, &m, &d, d_sem, &h0, &mi0, &hf, &mif, act, mod, centro, &tot, &ocu, &lib, tipo);
         
         if (res >= 15) {
+            //si hemos leido correctamente la linea, guardar en la lista correspondiente el nombre si es unico
             add_unique(lista_dias, &n_dias, d_sem);
             add_unique(lista_centros, &n_centros, centro);
             add_unique(lista_mods, &n_mods, mod);
@@ -94,7 +99,7 @@ int main() {
     fprintf(h, "#define N_ACTS %d\n", n_acts);
     fprintf(h, "#define N_TIPOS %d\n\n", n_tipos);
 
-    //estructura
+    //estructura de actividad
     fprintf(h, "typedef struct {\n");
     fprintf(h, "  uint32_t year, mes, dia, dia_semana; //fechas\n");
     fprintf(h, "  uint32_t t0, tf; //tiempo en minutos totales desde las 00:00;\n");

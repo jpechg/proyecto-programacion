@@ -56,7 +56,7 @@ void crear_grafica_top_actividades(actividad *dataptr, unsigned int n_lineas, ui
         }
     }
     fclose(f_plot);
-
+    //generamos la configuracion que luego correra gnuplot para generar el grafico
     FILE *f_script = fopen("config_act.gp", "w");
     if (!f_script) return;
 
@@ -80,8 +80,7 @@ void crear_grafica_top_actividades(actividad *dataptr, unsigned int n_lineas, ui
 
     fclose(f_script);
 
-    // Ejecución con -persist para mantener la ventana abierta
     printf("Generando grafica...\n");
-    system("gnuplot\\bin\\gnuplot.exe config_act.gp");
-    system("start grafico.png");
+    system("gnuplot\\bin\\gnuplot.exe config_act.gp"); //generamos el grafico con la configuracion antes escrita
+    system("start grafico.png"); //mostramos el grafico
 }

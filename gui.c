@@ -13,11 +13,12 @@
 static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *estado) {
     if (estado->mostrar_popup_analisis) {
         struct nk_rect popup_bounds = nk_rect(250, 150, 500, 450);
-        
+        //creamos un popup para mostrar el analisis        
         if (nk_popup_begin(ctx, NK_POPUP_STATIC, "Análisis de Datos", 
                           NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_CLOSABLE,
                           popup_bounds)) 
         {
+            //dependiendo del tipo de analisis creamos un layout concreto
             if (estado->tipo_analisis == 0) { // Frecuencia Diaria
                 nk_layout_row_dynamic(ctx, 25, 1);
                 char titulo[128];
@@ -46,7 +47,7 @@ static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *est
                         if (estado->frecuencias[i] > 0) {
                             nk_layout_row_dynamic(ctx, 25, 3);
                             
-                            // Día
+                            // Día, snprintfs para prevenir buffer overflows
                             snprintf(buffer, sizeof(buffer), "%d", i + 1);
                             nk_label(ctx, buffer, NK_TEXT_CENTERED);
                             
@@ -84,12 +85,12 @@ static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *est
                 nk_label(ctx, "Actividad más popular:", NK_TEXT_LEFT);
                 
                 nk_layout_row_dynamic(ctx, 30, 1);
-                if (estado->actividad_popular >= 0) {
+                if (estado->actividad_popular >= 0) { //comprobar que la actividad mas popular existe 
                     char act_nombre[256];
-                    snprintf(act_nombre, sizeof(act_nombre), "→ %s", 
+                    snprintf(act_nombre, sizeof(act_nombre), ": %s", 
                             actividades[estado->actividad_popular]);
                     nk_label(ctx, act_nombre, NK_TEXT_LEFT);
-                } else {
+                } else { //si no se encuentra nada, decirlo al usuario
                     nk_label(ctx, "No se encontraron datos", NK_TEXT_LEFT);
                 }
             }
@@ -103,6 +104,7 @@ static void render_popup_analisis(struct nk_context *ctx, struct_estado_app *est
             
             nk_popup_end(ctx);
         } else {
+            //si el usuario cierra la aplicacion, cambiar la variable de estado
             estado->mostrar_popup_analisis = 0;
         }
     }
@@ -121,6 +123,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         static int actividad_combo = 0;
         static int modo_combo = 0;
 
+        //bloque para los dropdowns de seleccion de opciones
         const char *options[] = {"Frecuencia Diaria", "Más Popular", "Generar Gráfica"};
         int seleccion_1 = 0;
         int seleccion_modo = 0;
@@ -128,15 +131,17 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         actividad_combo = nk_combo(ctx, actividades, N_ACTS, actividad_combo, 25, nk_vec2(200, 200));
         modo_combo = nk_combo(ctx, options, 3, modo_combo, 25, nk_vec2(200, 200));
 
+        //bloque de ejecucion de las diferentes funcionalidades 
         if (nk_button_label(ctx,"Ejecutar búsqueda"))
         {
+            //si el struct de estado contiene datos, liberarlos para recargarlos
             if (estado->datos_actuales != dataptr && estado->datos_actuales != NULL){
                 free(estado->datos_actuales);
             }
-
+            //cargar datos filtrados
             unsigned int resultados_busqueda = 0;
             actividad *Filtradas = buscar(dataptr,n_lineas,centro_combo,actividad_combo, &resultados_busqueda);
-
+            //si ha sido exitosa la carga, guardarla en el struct de estado
             if (Filtradas && resultados_busqueda > 0){
                 estado -> datos_actuales = Filtradas;
                 estado -> n_datos_actuales = resultados_busqueda;
@@ -152,7 +157,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
 
          if (estado->mostrar_popup_busqueda){
                 struct nk_rect popup_bounds = nk_rect(350,200,400,200);
-
+                //mostrar popup avisando del fallo de la busqueda si no se encuentran datos
                 if(nk_popup_begin(ctx, NK_POPUP_STATIC, "Búsqueda",  NK_WINDOW_BORDER | NK_WINDOW_TITLE | NK_WINDOW_CLOSABLE, popup_bounds)){
                     nk_layout_row_dynamic(ctx, 40, 1);
                     nk_label(ctx,"NO ESTA LA ACTIVIDAD EN EL CENTRO",NK_TEXT_CENTERED);
@@ -164,12 +169,13 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                         nk_popup_close(ctx);
                     }
                     nk_popup_end(ctx);
-                } else {
+                } else {//si falla la creacion del popup, desistir y no enseñarlo
                     estado->mostrar_popup_busqueda = 0;
                 }
                 
             }
         if (estado->datos_actuales != NULL && estado->datos_actuales != dataptr) {
+            //si no estamos  en el modo normal de datos, mostrar un boton para volver a la visualizacion normal
             nk_layout_row_dynamic(ctx, 30, 1);
 
             if (nk_button_label(ctx, "VOLVER")) {
@@ -202,6 +208,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         //botones para las acciones
         nk_layout_row_dynamic(ctx, 30, 3);
         if (nk_button_label(ctx, "Ver Favoritos")) {
+            //si se presiona el boton de favoritos, comprobar si los datos son correctos y mostrarlos si es el caso
             unsigned int n_favs = longitud_favoritos();
             if (n_favs > 0) {
                 actividad *dataptr_favs = leer_favoritos(n_favs);
@@ -216,11 +223,13 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         }
         if (estado->mostrar_favoritos == 1) {
             if (nk_button_label(ctx,"VOLVER")){
+                //si estamos mostrando favoritos y el usuario presiona el boton de volver, parar de mostrarlos
                 estado->mostrar_favoritos = 0;
             }
         }
         
         if (nk_button_label(ctx, "Actividades llenas")) {
+            //si el usuario presiona el boton de actividades llenas, cargarlo en la variable de estado y mostrarlo
             unsigned int n_result = 0;
             actividad *llenos = actividades_llenas(dataptr, n_lineas, &n_result);
             
@@ -261,7 +270,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 printf("No se encontraron actividades para el centro seleccionado\n");
             }
         }
-
+        //crear el layout para los componentes de la tabla
         nk_layout_row_template_begin(ctx, 30);
         nk_layout_row_template_push_static(ctx, 50);  // año
         nk_layout_row_template_push_static(ctx, 30);  // mes
@@ -277,6 +286,7 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         nk_layout_row_template_push_static(ctx, 80);  // favoritos
         nk_layout_row_template_end(ctx);
 
+        //añadir los titulos a la tabla
         nk_label(ctx, "Año", NK_TEXT_LEFT);
         nk_label(ctx, "M", NK_TEXT_LEFT);
         nk_label(ctx, "D", NK_TEXT_LEFT);
@@ -294,11 +304,12 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
         nk_layout_row_dynamic(ctx, 500, 1);
         if (nk_group_begin(ctx, "TableRegion", NK_WINDOW_BORDER)) {
             char row_data[11][512];
-
+            //cargamos los datos a mostrar con un operador ternario: si si hay datos en el struct de estado cargamos esos, si no, mostramos el que pasamos de argumento de la funcion, que es o bien el normal, o bien el de favoritos sin alterar
             actividad *datos_mostrar = estado -> datos_actuales ? estado -> datos_actuales : dataptr;
             unsigned int n_mostrar = estado -> datos_actuales ? estado -> n_datos_actuales : n_lineas;
             for (unsigned int i = 0; i < n_mostrar; i++) {
-                fill_row_data(row_data, datos_mostrar[i]);
+                //llenamos linea por linea los datos
+                fill_row_data(row_data, datos_mostrar[i]); //funcion para generar los strings, definida mas abajo
                 
                 nk_layout_row_template_begin(ctx, 30);
                 nk_layout_row_template_push_static(ctx, 50);
@@ -316,16 +327,19 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
                 nk_layout_row_template_end(ctx);
 
                 for (int j = 0; j < 11; j++) {
+                    //por cada una de las categorias, guardamos el texto
                     nk_label(ctx, row_data[j], NK_TEXT_LEFT);
                 }
                 
                 if (estado -> mostrar_favoritos == 0) {
+                    //si no estamos mostrando favoritos, permitir al usuario añadir favoritos
                     if (nk_button_label(ctx, "F")) {
                         add_favoritos(dataptr, i, n_lineas);
                         estado->recargar_f=1;
                     }
                 }
                 else if (estado -> mostrar_favoritos == 1) {
+                    //si si que los estamos enseñando, quitar favoritos
                     if (nk_button_label(ctx, "NF")) {
                         if (eliminar_favoritos(datos_mostrar[i])==1) {
                             estado->recargar_f = 1;
@@ -335,12 +349,13 @@ void render_app(struct nk_context *ctx, actividad *dataptr, unsigned int n_linea
             }
             nk_group_end(ctx);
         }
-    render_popup_analisis(ctx,estado);    
+    render_popup_analisis(ctx,estado); //si hay un popup que mostrar, renderizarlo
     }
     nk_end(ctx);
 }
 
 void fill_row_data(char dest[11][512], actividad v) {
+    //llenar los componentes del string a partir de los datos del struct
     sprintf(dest[0], "%d", v.year);
     sprintf(dest[1], "%d", v.mes);
     sprintf(dest[2], "%d", v.dia);

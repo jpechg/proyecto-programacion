@@ -11,6 +11,7 @@
         unsigned int i=0;
         unsigned int numero_coinc = 0;
         unsigned int contador = 0;
+        //primera pasada para contar el numero de coincidencias
         for (i=0;i<n_lineas;i++)
         {
             if ((dataptr[i].centro == centro) && (dataptr[i].actividad == act))
@@ -24,6 +25,7 @@
             return NULL;
         }
         contador=0;
+        //segunda pasada para guardar el vector de estructuras
         for (i=0;i<n_lineas;i++)
         {
             if ((dataptr[i].centro == centro) && (dataptr[i].actividad == act))

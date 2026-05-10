@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
     estado.n_datos_actuales = 0;
     estado.mostrar_favoritos = 0;
 
+    //carga inicial de datos
     unsigned int n_lineas = 0;
     int n_favs = longitud_favoritos();
     actividad *dataptr = read_csv("dataset.csv", &n_lineas);
@@ -74,10 +75,8 @@ int main(int argc, char *argv[]) {
             nk_sdl_handle_event(&evt);
         }
         nk_input_end(ctx);
-
+        //si hay que mostrar favoritos, hacer comprobaciones de que se puede
         if (estado.mostrar_favoritos == 1) {
-            // Recargar favoritos cada vez
-            //if (dataptr_favs) free(dataptr_favs);
             n_favs = longitud_favoritos();
             if (n_favs > 0) {
                 dataptr_favs = leer_favoritos(n_favs);
@@ -87,6 +86,7 @@ int main(int argc, char *argv[]) {
                 estado.mostrar_favoritos = 0;
                 }
             }
+            // Recargar favoritos si el flag de estado esta activado
             if (estado.recargar_f == 1) {
                 if (dataptr_favs) free(dataptr_favs);
                 n_favs = longitud_favoritos();
@@ -95,6 +95,7 @@ int main(int argc, char *argv[]) {
                 if (n_favs == 0)  estado.mostrar_favoritos = 0; //prevenir el caso de que ya no haya favoritos
             }
         } else {
+            //si no hay favoritos, renderizar la vista normal
             render_app(ctx, dataptr, n_lineas, &estado);
         }
             /* 5. Rendering */
@@ -107,7 +108,7 @@ int main(int argc, char *argv[]) {
         
         SDL_GL_SwapWindow(win);
     }
-
+    //liberar memoria y cerrar la aplicacion al cerrarla
     if (estado.datos_actuales && estado.datos_actuales != dataptr) {
         free(estado.datos_actuales);
     }
